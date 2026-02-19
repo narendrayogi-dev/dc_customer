@@ -14,14 +14,31 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
+
+use_frameworks! :linkage => :static
+
+
 target 'jwelerydukancustomer' do
   config = use_native_modules!
 
+  require_relative '../node_modules/react-native/scripts/react_native_pods'
+  require_relative '../node_modules/react-native-permissions/scripts/setup'
+
   use_react_native!(
+    
     :path => config[:reactNativePath],
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+      setup_permissions([
+    'Camera',
+    'PhotoLibrary',
+    'PhotoLibraryAddOnly',
+  ])
+  pod 'GoogleUtilities', :modular_headers => true
+
+
+
 
   post_install do |installer|
     react_native_post_install(
