@@ -21,7 +21,7 @@ import {
 import { async_keys, getData } from '../api/UserPreference';
 import { applyFilterSort_demo } from '../redux/action/demoProductActions';
 import ShimmerLoader from './ShimmerLoader';
-import { navigate } from '../routes/NavigationService';
+import { navigate, replace, resetTo } from '../routes/NavigationService';
 
 const CategoryListForHome = ({ loading, category, navigation }) => {
   const dispatch = useDispatch();
@@ -34,8 +34,11 @@ const CategoryListForHome = ({ loading, category, navigation }) => {
       });
     } else {
       dispatch(applyFilterSort_demo({ filterBy }));
-      
-      navigation.navigate('Demo_ProductsScreen');
+      navigate('Demo_Product', {
+        screen:"Demo_ProductsScreen"
+      })
+
+      // navigation.navigate('Demo_ProductsScreen');
     }
   };
 

@@ -322,13 +322,13 @@ const Demo_ProductDetails = props => {
                 <AppBadge
                   value={`₹ ${cart_detail?.cart_amount || 0}`}
                   status=""
-                  containerStyle={[
+                  style={[
                     styles.badgeContainer1,
                     {
                       left:
                         cart_detail?.cart_amount?.toString().length < 5
-                          ? -45
-                          : -55,
+                          ? -30
+                          : -20,
                     },
                   ]}
                   badgeStyle={{
@@ -599,7 +599,7 @@ const Demo_ProductDetails = props => {
               ]}>
               <AppIcon
                 type="antdesign"
-                name="shoppingcart"
+                name="shopping-cart"
                 color="#e1e1e1"
                 size={wp(8)}
               />

@@ -117,30 +117,37 @@ const Demo_Header = ({ navigation, cartItems }) => {
           <Text style={headerStyle.title}>Demo Store</Text>
         )}
 
-        <TouchableOpacity onPress={() => goForLogin(navigation)}>
+        <TouchableOpacity
+          onPress={() => goForLogin(navigation)}
+          style={headerStyle.cartWrapper}
+        >
           <AppIcon type="fa" name="shopping-cart" size={wp(8.5)} />
-          <AppBadge
-            value={cart_detail?.cart_count || 0}
-            status="error"
-            containerStyle={headerStyle.badgeContainer}
-          />
-          <AppBadge
-            value={`₹ ${cart_detail?.cart_amount || 0}`}
-            status=""
-            containerStyle={[
-              headerStyle.badgeContainer1,
-              {
-                left:
-                  cart_detail?.cart_amount?.toString().length < 5 ? -45 : -55,
-              },
-            ]}
-            badgeStyle={{
-              width:
-                cart_detail?.cart_amount?.toString().length < 5
-                  ? wp(13)
-                  : wp(17),
-            }}
-          />
+
+          {/* 🔴 Count badge */}
+          {cart_detail?.cart_count > 0 && (
+            <View style={headerStyle.countBadge}>
+              <Text style={headerStyle.countText}>
+                {cart_detail.cart_count ?? 0}
+              </Text>
+            </View>
+          )}
+
+          {/* 💰 Amount badge */}
+          {cart_detail?.cart_amount > 0 && (
+            <View
+              style={[
+                headerStyle.amountBadge,
+                {
+                  left:
+                    cart_detail.cart_amount?.toString().length < 5 ? -30 : -20,
+                },
+              ]}
+            >
+              <Text style={headerStyle.amountText}>
+                ₹ {cart_detail.cart_amount}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
       <TouchableOpacity
@@ -336,5 +343,46 @@ const headerStyle = StyleSheet.create({
     borderRadius: hp(0.6),
     paddingHorizontal: wp(3),
     paddingVertical: hp(2),
+  },
+
+  cartWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  countBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: 'red',
+    minWidth: wp(5),
+    height: wp(5),
+    borderRadius: wp(2.5),
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: wp(1),
+  },
+
+  countText: {
+    color: '#fff',
+    fontSize: wp(2.8),
+    fontWeight: '700',
+  },
+
+  amountBadge: {
+    position: 'absolute',
+    top: -10,
+
+    backgroundColor: 'gray',
+    borderRadius: wp(3),
+    paddingHorizontal: wp(2.5),
+    height: wp(6),
+    justifyContent: 'center',
+  },
+
+  amountText: {
+    color: '#fff',
+    fontSize: wp(3),
+    fontWeight: '600',
   },
 });

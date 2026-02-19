@@ -371,12 +371,12 @@ const BusinessDetails = ({navigation, route}) => {
                   reverse
                   type="fa"
                   name="remove"
-                  size={wp(2)}
+                  size={wp(5)}
                   color="red"
                   iconStyle={{fontSize: wp(4)}}
                   containerStyle={{
                     position: 'absolute',
-                    right: 0,
+                    right: 10,
                     top: 0,
                   }}
                   onPress={() => setCheck1(false)}
@@ -465,12 +465,12 @@ const BusinessDetails = ({navigation, route}) => {
                 reverse
                 type="fa"
                 name="remove"
-                size={wp(2)}
+                size={wp(5)}
                 color="red"
                 iconStyle={{fontSize: wp(4)}}
                 containerStyle={{
                   position: 'absolute',
-                  right: 0,
+                  right: 10,
                   top: 0,
                 }}
                 onPress={() => setCheck2(false)}

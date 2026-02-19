@@ -28,9 +28,12 @@ import ic_back from '../assets/image/back.png';
 import {async_keys, getData, storeData} from '../api/UserPreference';
 import {BASE_URL, makeRequest} from '../api/ApiInfo';
 import {showSnack} from '../components/Snackbar';
+import { useDispatch } from 'react-redux';
+import { registerSuccess } from '../redux/action/authActions';
 
 const PCSscreen = ({navigation}) => {
   const [checked, setChecked] = useState('');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,7 +73,7 @@ const PCSscreen = ({navigation}) => {
   //Last
   const handleNext = async () => {
     if (!checked) {
-      alert('Please choose an option');
+      Alert.alert('Please choose an option');
       return false;
     }
 
@@ -109,11 +112,19 @@ const PCSscreen = ({navigation}) => {
 
       if (response) {
         const {Status, Message} = response;
+        console.log(response, "response here");
+        
+        
         // const newResponse = response.Data.data;
         if (Status === true) {
           await storeData(async_keys.is_register, '1');
+          dispatch(registerSuccess({
+            is_register: '1',
+            active_store_code:response.Data.active_store_code 
+          }))
           showSnack(Message);
-          navigation.navigate('LoggedIn');
+          
+          // navigation.navigate('LoggedIn');
         } else {
           showSnack('Some error occured', null, true);
         }

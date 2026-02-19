@@ -32,6 +32,7 @@ import ic_user from '../assets/icons/user.png';
 import AppAvatar from '../components/AppAvatar';
 import AppIcon from '../components/AppIcon';
 import { navigate, resetTo } from './NavigationService';
+import { logoutRequest } from '../redux/action/authActions';
 
 const DrawerScreen = ({ navigation }) => {
   const inset = useSafeAreaInsets();
@@ -60,8 +61,9 @@ const DrawerScreen = ({ navigation }) => {
       {
         text: 'Yes',
         onPress: async () => {
-          await clearData();
-          navigation.navigate('LoggedOut');
+          // await clearData();
+          // navigation.navigate('LoggedOut');
+          dispatch(logoutRequest())
           showSnack('You have been logged out successfully');
         },
       },

@@ -163,15 +163,16 @@ const OtpScreen = ({ route, navigation }) => {
             Data.active_store_code || '',
           );
           await storeData(async_keys.is_register, Data.is_register);
-          dispatch(
+         
+          if (Data.is_register == 1) {
+             dispatch(
             loginSuccess({
               accessToken: Data.accessToken,
               is_register: Data.is_register,
               active_store_code: Data.active_store_code,
             }),
           );
-          if (Data.is_register == 1) {
-            navigation.navigate('LoggedIn');
+            // navigation.navigate('LoggedIn');
             setLoader(false);
           } else {
             navigation.reset({

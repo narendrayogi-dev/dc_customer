@@ -59,7 +59,7 @@ export const downloadImage = async (url, name, setLoader) => {
         parentFolder: 'DC_Jewellery', // your custom album
         mimeType: 'image/png',
       },
-      'Pictures',
+      'Image',
       res.path(),
     );
 

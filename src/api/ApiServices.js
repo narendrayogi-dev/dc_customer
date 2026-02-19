@@ -3,8 +3,8 @@ import {Alert} from 'react-native';
 
 export const ApiServices = {
   // baseURL: 'https://jewelrydukaan.com/dc_test/api/',
-  baseURL: 'https://jewelrydukaan.com/api/',
-  // baseURL: 'https://staging.premad.in/dc-dukaan/api/',
+  // baseURL: 'https://jewelrydukaan.com/api/',
+  baseURL: 'https://staging.premad.in/dc-dukaan/api/',
 
   // baseURL: 'https://acharya.skykraft.in/api/',
 

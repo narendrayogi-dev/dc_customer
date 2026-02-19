@@ -28,6 +28,7 @@ import {
   Platform,
   ActivityIndicator,
   KeyboardAvoidingView,
+  Pressable,
 } from 'react-native';
 import {
   heightPercentageToDP as hp,
@@ -608,18 +609,20 @@ const Demo_AllProductsScreen = props => {
             )}
 
             <View style={styles.productDetailsContainer}>
-              <AppIcon
-                disabled={isLoading}
-                reverse
-                type="feather"
-                name="download"
-                size={wp(3.5)}
-                color="#000080"
-                iconStyle={styles.iconStyle}
-                containerStyle={styles.downloadContainerStyle}
-                onPress={() => handleDownload(item)}
-              />
-
+           <Pressable style={styles.downloadContainer}>
+                <AppIcon
+                  reverse
+                  type="feather"
+                  name="download"
+                  size={wp(3.5)}
+                  color="#fff"
+                  iconStyle={styles.iconStyle}
+                  containerStyle={styles.downloadContainerStyle}
+                  onPress={() => {
+                    handleDownload(item);
+                  }}
+                />
+              </Pressable>
               <View
                 style={{
                   flexDirection: 'row',
@@ -819,31 +822,33 @@ const Demo_AllProductsScreen = props => {
 
           <Text style={styles.headerTitle}>Demo Store</Text>
 
-          <TouchableOpacity onPress={() => goForLogin(navigation)}>
-            <AppIcon type="fa" name="shopping-cart" size={wp(8.5)} />
-            <AppBadge
-              value={cart_detail?.cart_count || 0}
-              status="error"
-              containerStyle={styles.badgeContainer}
-            />
-            <AppBadge
-              value={`₹ ${cart_detail?.cart_amount || 0}`}
-              status=""
-              containerStyle={[
-                styles.badgeContainer1,
-                {
-                  left:
-                    cart_detail?.cart_amount?.toString().length < 5 ? -45 : -55,
-                },
-              ]}
-              badgeStyle={{
-                width:
-                  cart_detail?.cart_amount?.toString().length < 5
-                    ? wp(13)
-                    : wp(17),
-              }}
-            />
-          </TouchableOpacity>
+      <TouchableOpacity
+  onPress={() => goForLogin(navigation)}
+  style={styles.cartWrapper}
+>
+  <AppIcon type="fa" name="shopping-cart" size={wp(8.5)} />
+
+  {/* 🔴 Cart count */}
+  {/* {cart_detail?.cart_count > 0 && ( */}
+    <View style={styles.countBadge}>
+      <Text style={styles.countText}>
+        {cart_detail.cart_count ?? 0}
+      </Text>
+    </View>
+  {/* )} */}
+
+  {/* 💰 Cart amount */}
+
+    <View style={[styles.amountBadge, {
+      left:cart_detail.cart_amount?.toString().length < 5 ? -50 : -40
+    }]}>
+      <Text style={styles.amountText}>
+        ₹ {cart_detail.cart_amount ??0}
+      </Text>
+    </View>
+
+</TouchableOpacity>
+
         </View>
 
         <Modal
@@ -1604,17 +1609,67 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-end',
   },
-  downloadContainerStyle: {
+ downloadContainer: {
     position: 'absolute',
     zIndex: 999,
-    top: -28,
-    left: -5,
+    backgroundColor: '#000080',
+    top: -25,
+    left: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30,
+    borderRadius: 10,
     elevation: 5,
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
   },
   iconStyle: {
     fontSize: wp(5),
   },
+
+  cartWrapper: {
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+countBadge: {
+  position: 'absolute',
+  top: -6,
+  right: -6,
+  // backgroundColor: '#ff3b30',
+  backgroundColor: 'gray',
+
+  minWidth: wp(5),
+  height: wp(5),
+  borderRadius: wp(2.5),
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingHorizontal: wp(1),
+},
+
+countText: {
+  color: '#fff',
+  fontSize: wp(2.8),
+  fontWeight: '700',
+},
+
+amountBadge: {
+  position: 'absolute',
+  top: wp(0),
+  backgroundColor: 'gray',
+  borderRadius: wp(3),
+  paddingHorizontal: wp(2.5),
+  minWidth: wp(10),
+  height: wp(6),
+  justifyContent: 'center',
+},
+
+amountText: {
+  color: '#fff',
+  fontSize: wp(3),
+  fontWeight: '600',
+},
+
 });

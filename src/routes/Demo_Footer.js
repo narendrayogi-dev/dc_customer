@@ -40,6 +40,7 @@ import {fetchStoresRequest} from '../redux/action/storeActions';
 import {goForLogin} from '../components/globalFunctions';
 import {applyResetFilterSort_page_demo} from '../redux/action/demoProductActions';
 import AppIcon from '../components/AppIcon';
+import { resetTo } from './NavigationService';
 
 
 
@@ -94,7 +95,7 @@ const WaveBottomTabBar = props => {
       <TouchableOpacity
         activeOpacity={1}
         style={bothStyle.button}
-        onPress={() => jumpToPage('Demo_Home')}>
+        onPress={() => resetTo('Demo_Home')}>
 
         <AppIcon
           type="fa"
@@ -114,7 +115,7 @@ const WaveBottomTabBar = props => {
         <View style={styles.devideByTwo}>
           <TouchableOpacity
             style={styles.NavigationImageContainer}
-            onPress={() => jumpToPage('Demo_Product')}>
+            onPress={() => resetTo('Demo_Product')}>
 
             <Image
               source={product ? ic_active_product : ic_product}

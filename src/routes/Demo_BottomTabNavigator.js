@@ -21,7 +21,6 @@ export function Demo_BottomTabNavigator() {
     <Tab.Navigator
       screenOptions={{headerShown: false}}
       tabBar={props => <Demo_Footer {...props} />}>
-
       <Tab.Screen name="Demo_Home" component={Demo_HomeStack} />
       <Tab.Screen name="Demo_Product" component={Demo_ProductStack} />
       <Tab.Screen name="Wishlist" component={WishlistStack} />

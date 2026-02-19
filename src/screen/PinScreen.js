@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Image,
   StyleSheet,
@@ -19,9 +19,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-controller'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-import {NavigationActions, SafeAreaView, StackActions} from 'react-navigation';
+import {
+  NavigationActions,
+  SafeAreaView,
+  StackActions,
+} from 'react-navigation';
 import messaging from '@react-native-firebase/messaging';
 
 //Images
@@ -30,29 +34,29 @@ import shape from '../assets/image/shape.png';
 import rightArrow from '../assets/image/ic_rightArrow.png';
 import google from '../assets/image/ic_google.png';
 import facebook from '../assets/image/ic_facebook.png';
-import {ImageBackground} from 'react-native';
+import { ImageBackground } from 'react-native';
 import OTPInput from '../otpInput/OTPInput';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {async_keys, getData, storeData} from '../api/UserPreference';
-import {showSnack} from '../components/Snackbar';
-import {BASE_URL, makeRequest} from '../api/ApiInfo';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchProfileDataRequest} from '../redux/action/profileActions';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { async_keys, getData, storeData } from '../api/UserPreference';
+import { showSnack } from '../components/Snackbar';
+import { BASE_URL, makeRequest } from '../api/ApiInfo';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProfileDataRequest } from '../redux/action/profileActions';
 import Header from '../components/Header';
+import { loginSuccess } from '../redux/action/authActions';
 
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 
 // Screen
-const OtpScreen = ({navigation}) => {
+const OtpScreen = ({ navigation }) => {
   const [error, setError] = useState('');
   const [loader, setLoader] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [filled, setFilled] = useState(false);
   const inset = useSafeAreaInsets();
   const dispatch = useDispatch();
-  
 
-  const {profileData, isLoading} = useSelector(state => state.profile);
+  const { profileData, isLoading } = useSelector(state => state.profile);
 
   //For Otp
   const maximumCodeLength = 4;
@@ -85,11 +89,11 @@ const OtpScreen = ({navigation}) => {
       setLoader(true);
       const user_id = await getData(async_keys.user_id);
       const device_token = await messaging().getToken();
-      const params = {user_id, pin: otpCode, device_token};
+      const params = { user_id, pin: otpCode, device_token };
 
       const response = await makeRequest(`${BASE_URL}verify_otp`, params, true);
       if (response) {
-        const {ResponseCode, Status, Message, Data} = response;
+        const { ResponseCode, Status, Message, Data } = response;
 
         if (Status === true) {
           await storeData(async_keys.user_token, Data.accessToken);
@@ -98,9 +102,13 @@ const OtpScreen = ({navigation}) => {
             Data.active_store_code || '',
           );
           await storeData(async_keys.is_register, Data.is_register);
-
-          showSnack(Message);
-          navigation.navigate('LoggedIn');
+          dispatch(loginSuccess({
+            accessToken: Data.accessToken,
+            is_register: Data.is_register,
+            active_store_code: Data.active_store_code,
+          }),)
+            showSnack(Message);
+          // navigation.navigate('LoggedIn');
         } else if (Status === false) {
           setLoader(false);
           setError('invalid');
@@ -125,8 +133,9 @@ const OtpScreen = ({navigation}) => {
   // }
   return (
     <Pressable
-      style={[styles.container, {paddingTop: inset.top}]}
-      onPress={() => Keyboard.dismiss()}>
+      style={[styles.container, { paddingTop: inset.top }]}
+      onPress={() => Keyboard.dismiss()}
+    >
       {(isLoading || loader) && (
         <View
           style={{
@@ -137,7 +146,8 @@ const OtpScreen = ({navigation}) => {
             width: wp(100),
             height: hp(100),
             backgroundColor: 'rgba(255,255,255, .5)',
-          }}>
+          }}
+        >
           <ActivityIndicator color="#000080" size="large" />
           <Text
             style={{
@@ -145,7 +155,8 @@ const OtpScreen = ({navigation}) => {
               color: '#000',
               fontSize: 16,
               textAlign: 'center',
-            }}>
+            }}
+          >
             Please wait...
           </Text>
         </View>
@@ -154,7 +165,7 @@ const OtpScreen = ({navigation}) => {
       <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       <ImageBackground source={otpImage} style={styles.mobile}>
         <Header
-          style={{marginBottom: hp(3), marginLeft: -20}}
+          style={{ marginBottom: hp(3), marginLeft: -20 }}
           // title="Return Products"
           width={wp(73)}
           navigation={navigation}
@@ -169,10 +180,10 @@ const OtpScreen = ({navigation}) => {
           // style={styles.shapeContainer}
           source={shape}
           resizeMode="stretch"
-          style={styles.shapeStyle}>
+          style={styles.shapeStyle}
+        >
           <View style={styles.otpContainer}>
             <OTPInput
-            
               testID="pinInput"
               code={otpCode}
               setCode={handleOtp}
@@ -191,15 +202,20 @@ const OtpScreen = ({navigation}) => {
             <TouchableOpacity
               testID="loginButton"
               disabled={!filled}
-              style={[styles.nextButton, !filled && {backgroundColor: '#999'}]}
-              onPress={handleNext}>
+              style={[
+                styles.nextButton,
+                !filled && { backgroundColor: '#999' },
+              ]}
+              onPress={handleNext}
+            >
               <Text style={styles.nextText}>Login</Text>
               <Image source={rightArrow} style={styles.nextIcon} />
             </TouchableOpacity>
 
             <TouchableOpacity
               testID="loginWithOtpButton"
-              onPress={handleLoginWithOtp}>
+              onPress={handleLoginWithOtp}
+            >
               <Text style={styles.loginWithPasswordText}>Login with OTP</Text>
             </TouchableOpacity>
           </View>
@@ -262,7 +278,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    shadowOffset: {width: 4, height: 4},
+    shadowOffset: { width: 4, height: 4 },
     color: '#000',
     height: hp(5.5),
     aspectRatio: 1 / 1,

@@ -37,6 +37,7 @@ import Demo_Header from './Demo_Header';
 import {fetchDemoDataRequest} from '../redux/action/demoActions';
 import Demo_AutoScrollingProductList from './Demo_AutoScrollingProductList';
 import ShimmerLoader from '../components/ShimmerLoader';
+import { navigate } from '../routes/NavigationService';
 
 const bannerItem = [
   {
@@ -181,7 +182,11 @@ const Demo_HomeScreen = props => {
               <TouchableOpacity
                 testID="viewAllButton"
                 onPress={() =>
-                  navigation.navigate('Demo_ProductsScreen', {id: 0})
+                  navigate('Demo_Product', {
+                    screen: 'Demo_ProductsScreen',
+                    params: {id: 0},
+                  })
+                  // navigation.navigate('Demo_ProductsScreen', {id: 0})
                 }>
                 <Text style={styles.newArrivalText1}>View All</Text>
               </TouchableOpacity>

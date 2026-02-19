@@ -15,6 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {goForLogin} from '../components/globalFunctions';
 import {fetchNewArrivalProductRequest} from '../redux/action/productActions';
 import ShimmerLoader from '../components/ShimmerLoader';
+import { navigate } from '../routes/NavigationService';
 
 const Demo_AutoScrollingProductList = ({navigation}) => {
   const {demoHomeData, isLoading, error} = useSelector(state => state.demoHome);
@@ -59,7 +60,11 @@ const Demo_AutoScrollingProductList = ({navigation}) => {
           <TouchableOpacity
             testID={`productContainerButton${item.id}`}
             onPress={() =>
-              navigation.navigate('Demo_ProductDetails', {index, id: ''})
+              navigate('Demo_Product', {
+                screen:"Demo_ProductDetails", 
+                params: {index, id: ''},
+              })
+              // navigation.navigate('Demo_ProductDetails', {index, id: ''})
             }
             activeOpacity={0.7}
             key={item.id}

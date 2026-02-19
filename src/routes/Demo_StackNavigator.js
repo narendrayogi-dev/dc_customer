@@ -2,8 +2,8 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import Demo_HomeScreen from '../demo_screens/Demo_HomeScreen';
-// import Demo_ProductsScreen from '../demo_screens/Demo_ProductsScreen';
-// import Demo_ProductDetails from '../demo_screens/Demo_ProductDetails';
+import Demo_ProductsScreen from '../demo_screens/Demo_ProductsScreen';
+import Demo_ProductDetails from '../demo_screens/Demo_ProductDetails';
 
 const Stack = createStackNavigator();
 

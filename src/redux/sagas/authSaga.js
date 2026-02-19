@@ -76,6 +76,8 @@ function* registerSuccessFlow(action) {
       yield call(storeData, async_keys.active_store_code, active_store_code);
     }
 
+    yield put(setAuthenticated(true));
+
     // customer stays logged in
     yield put(setAppFlow('LoggedIn'));
 
