@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "134223204601",
+    "project_id": "dc-jewelry-108",
+    "storage_bucket": "dc-jewelry-108.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134223204601:android:1df65abacf55b37e821228",
+        "android_client_info": {
+          "package_name": "com.jwelerydukancustomer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "134223204601-12c0rfl35ick5pb76gt62o9pp2e4j43j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA947WgL2I20rhgXCwpLIeR9YTBciZolhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "134223204601-12c0rfl35ick5pb76gt62o9pp2e4j43j.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "134223204601-glbbik8tf0ugqbgv6scimov4j67hbhlt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dcjewelry.customerapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134223204601:android:2a24028d2d5bc590821228",
+        "android_client_info": {
+          "package_name": "com.jwelerydukanvendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "134223204601-12c0rfl35ick5pb76gt62o9pp2e4j43j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA947WgL2I20rhgXCwpLIeR9YTBciZolhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "134223204601-12c0rfl35ick5pb76gt62o9pp2e4j43j.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "134223204601-glbbik8tf0ugqbgv6scimov4j67hbhlt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dcjewelry.customerapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
