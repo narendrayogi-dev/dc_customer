@@ -180,7 +180,7 @@ const DrawerScreen = ({ navigation }) => {
                 type="materialIcons"
                 name="qrcode-scan"
                 color="#45D2D0"
-                size={wp(4.5)}
+                size={wp(6)}
                 iconStyle={{ fontSize: wp(6) }}
               />
               <Text style={styles.actionButtonText}>Scan Store</Text>
@@ -195,7 +195,7 @@ const DrawerScreen = ({ navigation }) => {
                 type="ionicon"
                 name="notifications-outline"
                 color="#FD8F06"
-                size={wp(4.5)}
+                size={wp(6)}
                 iconStyle={{ fontSize: wp(7.5) }}
               />
               <Text style={styles.actionButtonText}>Notification</Text>
@@ -210,7 +210,7 @@ const DrawerScreen = ({ navigation }) => {
                 type="fa"
                 name="edit"
                 color="#9A55D6"
-                size={wp(4.5)}
+                size={wp(6)}
                 iconStyle={{ fontSize: wp(6) }}
               />
               <Text style={styles.actionButtonText}>Edit Profile</Text>
@@ -439,6 +439,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: hp(1),
     elevation: 10,
+    minHeight:70,
     shadowOpacity: 0.3,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 1 },

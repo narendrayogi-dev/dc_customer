@@ -66,10 +66,7 @@ const OtpScreen = ({ route, navigation }) => {
     fetchDetails();
   }, []);
 
-  useEffect(() => {
-    console.log('routes props on otp ', getData(async_keys.email));
-  }, []);
-
+  
   useEffect(() => {
     if (resendTime === 0) {
       return;
@@ -148,6 +145,10 @@ const OtpScreen = ({ route, navigation }) => {
       }
 
       const device_token = await messaging().getToken();
+
+      console.log(device_token, "device tokem");
+      
+      
       // console.log('device_token', device_token);
       const params = { user_id, otp: otpCode, device_token };
 
@@ -155,6 +156,8 @@ const OtpScreen = ({ route, navigation }) => {
       if (response) {
         //  console.log('res-OTP_VERIFY', response);
         const { ResponseCode, Status, Message, Data } = response;
+        console.log(response, "response print");
+        
 
         if (Status === true) {
           await storeData(async_keys.user_token, Data.accessToken);
@@ -165,6 +168,7 @@ const OtpScreen = ({ route, navigation }) => {
           await storeData(async_keys.is_register, Data.is_register);
          
           if (Data.is_register == 1) {
+
              dispatch(
             loginSuccess({
               accessToken: Data.accessToken,
