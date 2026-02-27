@@ -2,11 +2,13 @@ import {async_keys, getData} from './UserPreference';
 
 // Base URL
 // export const BASE_URL = 'https://app.dcjewelry.in/api/';
-export const BASE_URL = 'https://jewelrydukaan.com/api/';
+// export const BASE_URL = 'https://jewelrydukaan.com/api/';
+// export const BASE_URL = 'http://10.188.76.121/jwlrydukan/api/';
+
 //stage url
 
 // export const BASE_URL = 'https://jewelrydukaan.com/dc_test/api/';
-// export const BASE_URL = 'https://staging.premad.in/dc-dukaan/api/';
+export const BASE_URL = 'https://staging.premad.in/dc-dukaan/api/';
 
 // Methods
 export const makeRequest = async (url, params = null, post = false) => {

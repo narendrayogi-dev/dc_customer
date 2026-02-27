@@ -1503,7 +1503,7 @@ const AllProductsScreen = props => {
                   onPress={() => setCheck1(false)}
                   style={{
                     position: 'absolute',
-                    right: 0,
+                    right: 10,
                     top: 0,
                     zIndex: 9999,
                   }}
@@ -1512,9 +1512,8 @@ const AllProductsScreen = props => {
                     reverse
                     type="fa"
                     name="remove"
-                    size={wp(2)}
                     color="red"
-                    iconStyle={{ fontSize: wp(4) }}
+                    style={{ fontSize: wp(4) }}
                   />
                 </TouchableOpacity>
 

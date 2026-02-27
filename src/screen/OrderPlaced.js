@@ -16,10 +16,10 @@ import {
 //Icon
 import ic_done from '../assets/image/correct.png';
 
-const OrderPlaced = ({navigation}) => {
+const OrderPlaced = ({navigation, route}) => {
   const [orderId, setOrderId] = useState('');
   useEffect(() => {
-    const {params} = navigation.state;
+    const {params} = route;
     setOrderId(params || '');
   }, []);
 

@@ -26,6 +26,9 @@ const Header = ({
 }) => {
   console.log('cart_detail 090', cart_detail, fromWishlist);
   const dispatch = useDispatch();
+
+  const cartCount = cart_detail?.cart_count ?? 0;
+const cartAmount = cart_detail?.cart_amount ?? 0;
   const handleLogout = async () => {
     Alert.alert('Are you sure', 'Do you want to Logout', [
       {
@@ -104,34 +107,26 @@ const Header = ({
         <View>{rightIcon}</View>
       )}
 
-      {fromWishlist && (
-        <TouchableOpacity onPress={() => navigation.navigate('Home', { screen: 'MyCart' })}>
-          <AppIcon type="fa" name="shopping-cart" size={wp(8.5)} />
-          <AppBadge
-            value={cart_detail?.cart_count || 0}
-            status="error"
-            style={styles.badgeContainer}
-          />
-          <AppBadge
-            value={`₹ ${cart_detail?.cart_amount || 0}`}
-            status=""
-            
-            containerStyle={[
-              styles.badgeContainer1,
-              {
-                left:
-                  cart_detail?.cart_amount?.toString().length < 5 ? -45 : -55,
-              },
-            ]}
-            badgeStyle={{
-              width:
-                cart_detail?.cart_amount?.toString().length < 5
-                  ? wp(13)
-                  : wp(17),
-            }}
-          />
-        </TouchableOpacity>
-      )}
+     {fromWishlist && (
+  <TouchableOpacity
+    onPress={() => navigation.navigate('Home', { screen: 'MyCart' })}
+    style={styles.cartWrapper}
+  >
+    <AppIcon type="fa" name="shopping-cart" size={wp(8.5)} />
+
+    {/* Count bubble */}
+    {cartCount > 0 && (
+      <View style={styles.countBubble}>
+        <Text style={styles.countText}>{cartCount}</Text>
+      </View>
+    )}
+
+    {/* Amount */}
+    <View style={styles.amountBox}>
+      <Text style={styles.amountText}>₹ {cartAmount}</Text>
+    </View>
+  </TouchableOpacity>
+)}
     </View>
   );
 };
@@ -183,4 +178,48 @@ const styles = StyleSheet.create({
     borderRadius: hp(3),
     backgroundColor: '#999',
   },
+
+
+  // cart 
+
+
+  cartWrapper: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  position: 'relative',
+},
+
+countBubble: {
+  position: 'absolute',
+  top: -6,
+  right: -6,
+  backgroundColor: '#e53935',
+  borderRadius: 10,
+  minWidth: 18,
+  height: 18,
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingHorizontal: 4,
+},
+
+countText: {
+  color: '#fff',
+  fontSize: 10,
+  fontWeight: 'bold',
+},
+
+amountBox: {
+  position: 'absolute',
+  left: -50,
+  backgroundColor: 'gray',
+  paddingHorizontal: wp(2.5),
+  paddingVertical: wp(0.8),
+  borderRadius: 6,
+},
+
+amountText: {
+  fontSize: 12,
+  fontWeight: '600',
+  color: '#fff',
+},
 });

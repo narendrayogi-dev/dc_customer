@@ -64,12 +64,16 @@ const EditProfile = ({ navigation }) => {
   const [value, setValue] = useState(null);
   const [dateSelected, setDateSelected] = useState(false);
   const [otpCode, setOTPCode] = useState('');
-  const pinRef = useRef(null)
+  const pinRef = useRef(null);
+
+  const [pinCodeModal, setPinCodeModal] = useState(false);
+  const [otpPin, setOtpPin] = useState('');
+  const [userEnterOtp, setUserEnterOtp] = useState('');
 
   const maximumCodeLength = 4;
   const handleOtp = text => {
     setOtpError('');
-    setOTPCode(text?.replace(/[^0-9]/g, ''));
+    setOTPCode(text ?? '');
   };
   const [inputs, setInputs] = useState({
     name: '',
@@ -77,6 +81,7 @@ const EditProfile = ({ navigation }) => {
     email: '',
   });
   const inset = useSafeAreaInsets();
+
   const dispatch = useDispatch();
   const { profile, error } = useSelector(state => state.home.homeData);
   const { isLoading } = useSelector(state => state.profile);
@@ -87,10 +92,6 @@ const EditProfile = ({ navigation }) => {
       store_name: profile?.store_name,
       email: profile?.email,
     });
-    setOTPCode(profile?.pin);
-    if(profile?.pin){
-      pinRef.current.setValue(profile?.pin)
-    }
     setValue(profile?.gender);
     setDate(moment(profile?.dob, 'YYYY-MM-DD').toDate());
     setProfileImage({ uri: profile?.image });
@@ -102,21 +103,21 @@ const EditProfile = ({ navigation }) => {
 
   const handlePicDone = async picData => {
     console.log(picData);
-    
+    console.log(picData, 'picData');
+
     setProfileImage(picData);
   };
 
   console.log('PROFILE _ IMAGE', profileImage);
 
   const handleUpdate = () => {
-
-    if(!otpCode){
+    if (!otpCode) {
       setOtpError('error');
-      return
+      return;
     }
-    if(otpCode.length !== 4){
+    if (otpCode.length !== 4) {
       setOtpError('invalid');
-      return
+      return;
     }
     if (profileImage?.type) {
       const { base64, ...image } = profileImage;
@@ -248,7 +249,7 @@ const EditProfile = ({ navigation }) => {
               colors={colors}
             />
           }
-          // contentContainerStyle={{paddingBottom: hp(10)}}
+          contentContainerStyle={{ paddingBottom: hp(10) }}
         >
           <View style={styles.homeContainer}>
             {isLoading ? (
@@ -566,23 +567,22 @@ const EditProfile = ({ navigation }) => {
             >
               <Text style={styles.dropDownHeader}>Create Pin</Text>
               <OTPInput
-              ref={pinRef}
+                ref={pinRef}
                 testID="pinInput"
                 code={String(otpCode)}
                 isPinCode
                 setCode={handleOtp}
                 maximumLength={maximumCodeLength}
                 border="bottom"
-                autoFocus={true}
+                autoFocus={false}
               />
-            
             </View>
-  {otpError === 'error' && (
-                <Text style={styles.errorText}>Please enter PIN</Text>
-              )}
-              {otpError === 'invalid' && (
-                <Text style={styles.errorText}>Please enter valid PIN</Text>
-              )}
+            {otpError === 'error' && (
+              <Text style={styles.errorText}>Please enter PIN</Text>
+            )}
+            {otpError === 'invalid' && (
+              <Text style={styles.errorText}>Please enter valid PIN</Text>
+            )}
             <TouchableOpacity
               onPress={handleUpdate}
               style={styles.updateButton}
@@ -798,8 +798,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#000',
   },
-  errorText:{
-    color:'red',
-    fontSize:wp(3)
-  }
+  errorText: {
+    color: 'red',
+    fontSize: wp(3),
+  },
 });

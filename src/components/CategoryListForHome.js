@@ -43,7 +43,6 @@ const CategoryListForHome = ({ loading, category, navigation }) => {
   };
 
   const renderCategory = ({ item, index }) => {
-    console.log('jkdhasjdfshfjdsgbf', item);
     return loading ? (
       <ShimmerLoader
         key={item}

@@ -127,7 +127,7 @@ const DrawerScreen = ({ navigation }) => {
               <AppAvatar
                 size={hp(9)}
                 rounded
-                source={{ uri: profile?.image }}
+                uri={profile?.image || ''}
               />
             ) : (
               <AppAvatar

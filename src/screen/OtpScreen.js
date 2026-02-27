@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -26,6 +26,8 @@ import OTPInput from '../otpInput/OTPInput';
 
 import { async_keys, getData, storeData } from '../api/UserPreference';
 
+const AnimatedPressable = createAnimatedComponent(Pressable)
+
 //Images
 import otpImage from '../assets/image/otpImage.png';
 import shape from '../assets/image/shape.png';
@@ -37,6 +39,8 @@ import { fetchProfileDataRequest } from '../redux/action/profileActions';
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import { loginSuccess } from '../redux/action/authActions';
+import { createAnimatedComponent } from 'react-native-reanimated';
+import { useKeyboardPush } from '../hooks/useKeyboardPush';
 
 const { height, width } = Dimensions.get('window');
 
@@ -51,6 +55,17 @@ const OtpScreen = ({ route, navigation }) => {
   const inset = useSafeAreaInsets();
   const dispatch = useDispatch();
   const [email, setEmail] = useState();
+
+  const otpRef = useRef(null)
+
+  const {animatedStyle} = useKeyboardPush(0 , ()=>{
+    if(otpRef?.current){
+      otpRef.current.blur()
+    }
+    
+
+  })
+
 
   const { profileData, isLoading } = useSelector(state => state.profile);
 
@@ -213,8 +228,8 @@ const OtpScreen = ({ route, navigation }) => {
   // }
 
   return (
-    <Pressable
-      style={[styles.container, { paddingTop: inset.top }]}
+    <AnimatedPressable
+      style={[styles.container, { paddingTop: inset.top }, animatedStyle]}
       onPress={() => Keyboard.dismiss()}
     >
       {(isLoading || loader) && (
@@ -274,6 +289,7 @@ const OtpScreen = ({ route, navigation }) => {
         >
           <View style={styles.otpContainer}>
             <OTPInput
+            ref={otpRef}
               testID="otpInput"
               code={otpCode}
               setCode={handleOtp}
@@ -326,7 +342,7 @@ const OtpScreen = ({ route, navigation }) => {
           </View>
         </ImageBackground>
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 };
 

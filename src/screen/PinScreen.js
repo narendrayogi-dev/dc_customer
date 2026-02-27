@@ -44,8 +44,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfileDataRequest } from '../redux/action/profileActions';
 import Header from '../components/Header';
 import { loginSuccess } from '../redux/action/authActions';
+import { useKeyboardPush } from '../hooks/useKeyboardPush';
+import { createAnimatedComponent } from 'react-native-reanimated';
 
 const { height, width } = Dimensions.get('window');
+
+const AnimatedPressable = createAnimatedComponent(Pressable)
+
 
 // Screen
 const OtpScreen = ({ navigation }) => {
@@ -55,6 +60,18 @@ const OtpScreen = ({ navigation }) => {
   const [filled, setFilled] = useState(false);
   const inset = useSafeAreaInsets();
   const dispatch = useDispatch();
+
+
+  
+    const otpRef = useRef(null)
+  
+    const {animatedStyle} = useKeyboardPush(0 , ()=>{
+      if(otpRef?.current){
+        otpRef.current.blur()
+      }
+      
+  
+    })
 
   const { profileData, isLoading } = useSelector(state => state.profile);
 
@@ -132,8 +149,8 @@ const OtpScreen = ({ navigation }) => {
   //   );
   // }
   return (
-    <Pressable
-      style={[styles.container, { paddingTop: inset.top }]}
+    <AnimatedPressable
+      style={[styles.container, { paddingTop: inset.top }, animatedStyle]}
       onPress={() => Keyboard.dismiss()}
     >
       {(isLoading || loader) && (
@@ -184,6 +201,7 @@ const OtpScreen = ({ navigation }) => {
         >
           <View style={styles.otpContainer}>
             <OTPInput
+            ref={otpRef}
               testID="pinInput"
               code={otpCode}
               setCode={handleOtp}
@@ -221,7 +239,7 @@ const OtpScreen = ({ navigation }) => {
           </View>
         </ImageBackground>
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 };
 

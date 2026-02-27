@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -14,7 +14,7 @@ import {
   Keyboard,
   ImageBackground,
   ActivityIndicator,
-  Linking
+  Linking,
 } from 'react-native';
 
 import {
@@ -22,25 +22,28 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import {async_keys, getData, storeData} from '../api/UserPreference';
+import { async_keys, getData, storeData } from '../api/UserPreference';
 
 //Images
 import img_mobile from '../assets/image/mobile.png';
 import ic_shape from '../assets/image/shape.png';
 import ic_arrow from '../assets/image/ic_targetArrow.png';
 import ic_rightArrow from '../assets/image/ic_rightArrow.png';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-controller'
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {scale, verticalScale} from '../components/Scaling';
-import {BASE_URL, makeRequest} from '../api/ApiInfo';
-import {showSnack} from '../components/Snackbar';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { scale, verticalScale } from '../components/Scaling';
+import { BASE_URL, makeRequest } from '../api/ApiInfo';
+import { showSnack } from '../components/Snackbar';
 import VersionCheck from 'react-native-version-check';
+import { createAnimatedComponent } from 'react-native-reanimated';
+import { useKeyboardPush } from '../hooks/useKeyboardPush';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
+const AnimatedPressable = createAnimatedComponent(Pressable);
 
-const MobileScreen = ({navigation}) => {
-  const [loader, setLoader] = useState(true);
+const MobileScreen = ({ navigation }) => {
+  const [loader, setLoader] = useState(false);
   const [mobile, setMobile] = useState('');
   const [error, setError] = useState('');
   const inset = useSafeAreaInsets();
@@ -48,11 +51,11 @@ const MobileScreen = ({navigation}) => {
   const [selectEmail, setSelectEmail] = useState(false);
   const [emailError, setEmailError] = useState('');
 
-  useEffect(() => {
-    fetchDetails();
-  }, []);
+  const { animatedStyle } = useKeyboardPush();
 
-
+  // useEffect(() => {
+  //   fetchDetails();
+  // }, []);
 
   const openPlayStore = async () => {
     const packageName = 'com.jwelerydukancustomer';
@@ -81,8 +84,8 @@ const MobileScreen = ({navigation}) => {
           'Update Available',
           'A new version of the app is available. Please update to continue.',
           [
-            {text: 'Cancel', style: 'cancel'},
-            {text: 'Update', onPress: openPlayStore}, // Direct function call
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Update', onPress: openPlayStore }, // Direct function call
           ],
         );
       }
@@ -104,17 +107,17 @@ const MobileScreen = ({navigation}) => {
     const id = await getData(async_keys.user_type);
 
     if (id) {
-     const routeNames = [
-  'PersonalDetail',
-  'BusinessDetail',
-  'ChooseBusinessType',
-  'ChoosePCS',
-];
+      const routeNames = [
+        'PersonalDetail',
+        'BusinessDetail',
+        'ChooseBusinessType',
+        'ChoosePCS',
+      ];
 
-navigation.reset({
-  index: routeNames.length - 1, // 3
-  routes: routeNames.map(name => ({ name })),
-});
+      navigation.reset({
+        index: routeNames.length - 1, // 3
+        routes: routeNames.map(name => ({ name })),
+      });
 
       return true;
     }
@@ -125,16 +128,16 @@ navigation.reset({
     const pin = await getData(async_keys.pin);
 
     if (businessName && state && city && pin) {
-    const routeNames = [
-  'PersonalDetail',
-  'BusinessDetail',
-  'ChooseBusinessType',
-];
+      const routeNames = [
+        'PersonalDetail',
+        'BusinessDetail',
+        'ChooseBusinessType',
+      ];
 
-navigation.reset({
-  index: routeNames.length - 1, // 2
-  routes: routeNames.map(name => ({ name })),
-});
+      navigation.reset({
+        index: routeNames.length - 1, // 2
+        routes: routeNames.map(name => ({ name })),
+      });
 
       return true;
     }
@@ -143,24 +146,20 @@ navigation.reset({
     const gender = await getData(async_keys.gender);
     const dob = await getData(async_keys.dob);
 
-  if (userName && gender && dob) {
-  navigation.reset({
-    index: 1,
-    routes: [
-      {name: 'PersonalDetail'},
-      {name: 'BusinessDetail'},
-    ],
-  });
-  return true;
-}
+    if (userName && gender && dob) {
+      navigation.reset({
+        index: 1,
+        routes: [{ name: 'PersonalDetail' }, { name: 'BusinessDetail' }],
+      });
+      return true;
+    }
 
     const token = await getData(async_keys.user_token);
     if (token) {
-    navigation.reset({
-  index: 0,
-  routes: [{name: 'PersonalDetail'}],
-});
-
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'PersonalDetail' }],
+      });
 
       return true;
     }
@@ -184,7 +183,6 @@ navigation.reset({
     setEmail(email);
   };
 
-
   const handleNext = async () => {
     try {
       setLoader(true); // Start loader at the beginning
@@ -204,7 +202,7 @@ navigation.reset({
           return;
         }
 
-        params = {mobile};
+        params = { mobile };
         await storeData(async_keys.mobile_number, mobile);
       } else {
         // Validation for email
@@ -220,7 +218,7 @@ navigation.reset({
           return;
         }
 
-        params = {email};
+        params = { email };
         // Optionally store email in async storage
         await storeData(async_keys.email, email);
       }
@@ -236,7 +234,7 @@ navigation.reset({
       console.log('login response show', response);
 
       if (response) {
-        const {Status, Message, Data} = response;
+        const { Status, Message, Data } = response;
         console.log(Data);
 
         if (Status) {
@@ -258,9 +256,10 @@ navigation.reset({
   };
 
   return (
-    <Pressable
-      style={[styles.container, {paddingTop: inset.top}]}
-      onPress={() => Keyboard.dismiss()}>
+    <AnimatedPressable
+      style={[styles.container, { paddingTop: inset.top }, animatedStyle]}
+      onPress={() => Keyboard.dismiss()}
+    >
       {loader && (
         <View
           style={{
@@ -271,7 +270,8 @@ navigation.reset({
             width: wp(100),
             height: hp(100),
             backgroundColor: 'rgba(255,255,255, .5)',
-          }}>
+          }}
+        >
           <ActivityIndicator color="#000080" size="large" />
           <Text
             style={{
@@ -279,19 +279,15 @@ navigation.reset({
               color: '#000',
               fontSize: 16,
               textAlign: 'center',
-            }}>
+            }}
+          >
             Please wait...
           </Text>
         </View>
       )}
-      <KeyboardAwareScrollView
-        keyboardShouldPersistTaps="handled"
-        bounces={false}
-        contentContainerStyle={styles.scrollviewContainer}>
+      <View style={styles.scrollviewContainer}>
         <StatusBar backgroundColor="#fff" barStyle="dark-content" />
         <Image source={img_mobile} style={styles.mobile} resizeMode="contain" />
-
-    
 
         <View style={styles.homeContainer}>
           <ImageBackground
@@ -301,7 +297,8 @@ navigation.reset({
               styles.shapeStyle,
               // {left: 10},
               // os === 'ios' && {top: verticalScale(-35)},
-            ]}>
+            ]}
+          >
             <View style={styles.ImageBackgroundHomeContainer}>
               <View style={styles.detailContainer}>
                 <Text style={styles.detailText}>We want to know you!</Text>
@@ -347,7 +344,8 @@ navigation.reset({
                       top: error ? 15 : 5,
                       fontSize: 12,
                       left: 3,
-                    }}>
+                    }}
+                  >
                     Login With Email
                   </Text>
                 </View>
@@ -386,7 +384,8 @@ navigation.reset({
                       top: emailError ? 15 : 5,
                       fontSize: 12,
                       left: 3,
-                    }}>
+                    }}
+                  >
                     Login With Number
                   </Text>
                 </View>
@@ -395,15 +394,16 @@ navigation.reset({
               <TouchableOpacity
                 testID="nextButton"
                 onPress={handleNext}
-                style={styles.nextButton}>
+                style={styles.nextButton}
+              >
                 <Text style={styles.nextText}>Next</Text>
                 <Image source={ic_rightArrow} style={styles.nextIcon} />
               </TouchableOpacity>
             </View>
           </ImageBackground>
         </View>
-      </KeyboardAwareScrollView>
-    </Pressable>
+      </View>
+    </AnimatedPressable>
   );
 };
 
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
     width: scale(3.6 * 35),
     height: verticalScale(7 * 13),
     right: scale(3.6 * -35),
-    transform: [{rotate: '-30deg'}],
+    transform: [{ rotate: '-30deg' }],
   },
   inputContainer: {
     backgroundColor: '#fff',
