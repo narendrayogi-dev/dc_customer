@@ -13,6 +13,7 @@ import {
   StatusBar,
   Platform,
   RefreshControl,
+  Pressable,
 } from 'react-native';
 
 import {
@@ -47,6 +48,9 @@ import AppIcon from '../components/AppIcon';
 import ShimmerLoader from '../components/ShimmerLoader';
 import AppAvatar from '../components/AppAvatar';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import PincodeModal from '../components/PincodeModal'
+import axios from 'axios'
+import { showMessage } from 'react-native-flash-message';
 
 const gender = [
   { label: 'Male', value: 'Male' },
@@ -56,6 +60,16 @@ const gender = [
 const EditProfile = ({ navigation }) => {
   // const params =
   //   navigation.getState().routes[navigation.getState().index].params;
+  const [inputs, setInputs] = useState({
+    name: '',
+    store_name: '',
+    email: '',
+  });
+  const inset = useSafeAreaInsets();
+
+  const dispatch = useDispatch();
+  const { profile, error } = useSelector(state => state.home.homeData);
+  const { isLoading } = useSelector(state => state.profile);
   const [imagePickerModal, setImagePickerModal] = useState(false);
   const [profileImage, setProfileImage] = useState({});
   const [otpError, setOtpError] = useState('');
@@ -70,21 +84,27 @@ const EditProfile = ({ navigation }) => {
   const [otpPin, setOtpPin] = useState('');
   const [userEnterOtp, setUserEnterOtp] = useState('');
 
+  const [otpVerified, setOTPVerified] = useState(false)
+
+
+
+
+
+  useEffect(() => {
+
+    if (profile?.pin && !otpVerified) {
+      pinRef?.current?.setValue('●●●●')
+    }
+
+  }, [profile, otpVerified])
+
+
   const maximumCodeLength = 4;
   const handleOtp = text => {
     setOtpError('');
     setOTPCode(text ?? '');
   };
-  const [inputs, setInputs] = useState({
-    name: '',
-    store_name: '',
-    email: '',
-  });
-  const inset = useSafeAreaInsets();
 
-  const dispatch = useDispatch();
-  const { profile, error } = useSelector(state => state.home.homeData);
-  const { isLoading } = useSelector(state => state.profile);
   useEffect(() => {
     console.log('profile data render on edit profile', profile.pin);
     setInputs({
@@ -185,6 +205,69 @@ const EditProfile = ({ navigation }) => {
     dispatch(fetchHomeDataRequest(navigation));
   };
 
+
+
+  const handlePinCodeModalClose = () => {
+    setUserEnterOtp('')
+    setPinCodeModal(false)
+
+  }
+  const handleOTPVerify = () => {
+    try {
+
+      if (userEnterOtp == otpPin) {
+        showMessage({
+          type: "success",
+          message: "OTP Match Successfully"
+        })
+        setOTPVerified(true)
+        pinRef.current?.setValue(profile?.pin)
+        handlePinCodeModalClose()
+      } else {
+        showMessage({
+          type: "danger",
+          message: "Does not match otp please try again"
+        })
+      }
+    } catch (error) {
+
+    }
+
+  }
+
+
+  const handleSeePin = async () => {
+    try {
+      const response = await axios.post(`${BASE_URL}customer_register_login_mobile`, {
+        mobile: profile?.mobile
+      })
+
+      console.log("OTP PRINT HERE", response?.data?.Data?.otp);
+
+
+      if (response?.data?.Status) {
+        showMessage({
+          type: "success",
+          message: response?.data?.Message ?? ''
+        })
+        setOtpPin(response?.data?.Data?.otp ?? '')
+        setPinCodeModal(true)
+      }
+    } catch (error) {
+      console.log("Error to sendinng otp ", error);
+
+
+    }
+  }
+
+  const hidePin = () => {
+    setOTPVerified(false)
+    pinRef.current?.setValue('●●●●')
+    setOtpPin('')
+
+    setUserEnterOtp('')
+  }
+
   return (
     <Gradient fromColor="#DBD9F6" toColor="#fff">
       <View
@@ -198,7 +281,7 @@ const EditProfile = ({ navigation }) => {
           title="Edit Profile"
           width={wp(65)}
           navigation={navigation}
-          // params={params}
+        // params={params}
         />
 
         <ImagePickerComponent
@@ -562,7 +645,7 @@ const EditProfile = ({ navigation }) => {
                 styles.dropDownContainer,
                 { paddingVertical: wp(1) },
                 (otpError === 'error' || otpError === 'invalid') &&
-                  styles.error,
+                styles.error,
               ]}
             >
               <Text style={styles.dropDownHeader}>Create Pin</Text>
@@ -577,6 +660,26 @@ const EditProfile = ({ navigation }) => {
                 autoFocus={false}
               />
             </View>
+            <Pressable style={{
+              alignSelf: "flex-end",
+              marginRight: 35,
+              marginTop: 10
+
+            }}
+              onPress={() => {
+                if (otpVerified) {
+                  hidePin()
+                } else {
+                  handleSeePin()
+
+                }
+              }}
+            >
+              <Text style={{
+                textDecorationLine: "underline",
+                color: "blue"
+              }}>{otpVerified ? "hide pin" : "See your pincode"}</Text>
+            </Pressable>
             {otpError === 'error' && (
               <Text style={styles.errorText}>Please enter PIN</Text>
             )}
@@ -597,6 +700,13 @@ const EditProfile = ({ navigation }) => {
               <Text style={styles.deleteButtonText}>Delete Profile</Text>
             </TouchableOpacity>
           </View>
+          <PincodeModal
+            visible={pinCodeModal}
+            code={userEnterOtp}
+            setCode={setUserEnterOtp}
+            onVerify={handleOTPVerify}
+            onClose={handlePinCodeModalClose}
+          />
         </KeyboardAwareScrollView>
       </View>
     </Gradient>

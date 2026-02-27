@@ -10,7 +10,7 @@ import setupNotifications from './src/fireBase/useFirebaseListeners';
 import RootNavigator from './src/routes/Routes';
 import { useDispatch, useSelector } from 'react-redux';
 import {bootstrapAuth} from './src/redux/action/authActions';
-import { Animated, AppState, Easing, Linking } from 'react-native';
+import { Animated, AppState, Easing, Linking, Platform } from 'react-native';
 import VersionCheck from 'react-native-version-check';
 
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -58,22 +58,35 @@ const dispatch = useDispatch();
 
 
 
-    const openPlayStore = async () => {
-      const packageName = 'com.jwelerydukancustomer';
-      const playStoreUrl = `https://play.google.com/store/apps/details?id=${packageName}&hl=en`;
-      const marketUrl = `market://details?id=${packageName}`;
-      try {
-        const supported = await Linking.canOpenURL(marketUrl);
-        if (supported) {
-          await Linking.openURL(marketUrl);
-        } else {
-          await Linking.openURL(playStoreUrl); // Fallback to web link
-        }
-      } catch (error) {
-        console.error("Can't open URL:", error);
-        await Linking.openURL(playStoreUrl); // Last fallback
-      }
-    };
+
+const openStore = async () => {
+  const packageName = 'com.jwelerydukancustomer';
+  const appleAppId = '6471483523'; 
+
+  const urls = Platform.select({
+    ios: {
+      market: `itms-apps://itunes.apple.com/app/id${appleAppId}`,
+      web: `https://apps.apple.com/app/id${appleAppId}`,
+    },
+    android: {
+      market: `market://details?id=${packageName}`,
+      web: `https://play.google.com/store/apps/details?id=${packageName}`,
+    },
+  });
+
+  try {
+    const supported = await Linking.canOpenURL(urls.market);
+    if (supported) {
+      await Linking.openURL(urls.market);
+    } else {
+      await Linking.openURL(urls.web);
+    }
+  } catch (error) {
+    console.error("Store link error:", error);
+    await Linking.openURL(urls.web);
+  }
+};
+
   
 
    useEffect(() => {
@@ -125,7 +138,7 @@ const dispatch = useDispatch();
        <UpdateModal
         visible={showUpdateModal}
         // onCancel={() => setShowUpdateModal(false)}
-        onUpdate={openPlayStore}
+        onUpdate={openStore}
       />
       <FlashMessage position="top" />
       </KeyboardProvider>
