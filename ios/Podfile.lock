@@ -2068,7 +2068,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-date-picker (5.0.13):
+  - react-native-date-picker (5.0.12):
     - boost
     - DoubleConversion
     - fast_float
@@ -3034,6 +3034,34 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - RNDateTimePicker (8.6.0):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - RNDeviceInfo (15.0.1):
     - React-Core
   - RNFastImage (8.13.0):
@@ -3646,6 +3674,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
+  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFastImage (from `../node_modules/@d11/react-native-fast-image`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
@@ -3893,6 +3922,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCMaskedView:
     :path: "../node_modules/@react-native-masked-view/masked-view"
+  RNDateTimePicker:
+    :path: "../node_modules/@react-native-community/datetimepicker"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   RNFastImage:
@@ -3989,7 +4020,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 9d33f0f79b6b5705d08d89d8fb9709d1ee655c81
   React-microtasksnativemodule: 1a5a9488d2a05c74ea276c2012df632d8221d169
   react-native-blob-util: e2dec05dec043b39e26549a2ebc6c442b867c52c
-  react-native-date-picker: d1d607499ff9f2e1231f902b4bda70595d71253e
+  react-native-date-picker: 75b015a41b3323cab5c0b528f1956fbf82b4d557
   react-native-document-picker: 07136ef5cc3fb4a04419458616cb23be6fcd3ba1
   react-native-image-picker: b99d9c1f2ddbef491eb49e1103e5c2ce78b9ab37
   react-native-image-resizer: 823dbca28ed2e78feb780ac9eb53db0bb8c6dd4c
@@ -4044,6 +4075,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 8857fb173af29664cb90897903902dc8533e36cc
   RNCClipboard: 4eea71d801c880175c12f6ab14332ca86fed935f
   RNCMaskedView: 8bfc13a356455b15d56114738f4d2a804769c1bf
+  RNDateTimePicker: 239dc0c70f94e440d815763d3bace9c4ea73ae27
   RNDeviceInfo: 53f9c84e28e854a308d3e548e25ef120b4615531
   RNFastImage: 94681302bfbe8076b0163450183ae2121b45e525
   RNFBApp: 58f13fa19e95d50e210c54c1dff0b6e1ea4235a8
