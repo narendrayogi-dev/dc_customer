@@ -20,7 +20,7 @@ export const BottomTabNavigator = () => {
       tabBar={props => <MaterialFooterComponent {...props} />}
     >
       <Tab.Screen name="Home" component={HomeStack} />
-      <Tab.Screen name="Product" component={ProductStack} />
+      <Tab.Screen name="Product" component={ProductStack}  />
       <Tab.Screen name="Wishlist" component={WishlistStack} />
       <Tab.Screen name="Orders" component={OrdersStack} />
       <Tab.Screen name="Store" component={StoreStack} />

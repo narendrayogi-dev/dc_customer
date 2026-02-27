@@ -44,8 +44,13 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {showSnack} from '../components/Snackbar';
 import {BASE_URL, makeRequest} from '../api/ApiInfo';
 import AppIcon from '../components/AppIcon';
+import { createAnimatedComponent } from 'react-native-reanimated';
+import { useKeyboardPush } from '../hooks/useKeyboardPush';
 
 const {height, width} = Dimensions.get('window');
+
+
+const AnimatedPressable = createAnimatedComponent(Pressable)
 
 const BusinessDetails = ({navigation, route}) => {
   const [name, setName] = useState('');
@@ -76,6 +81,9 @@ const BusinessDetails = ({navigation, route}) => {
   const [otpError, setOtpError] = useState('');
   const inset = useSafeAreaInsets();
   const os = Platform.OS;
+  
+
+  const {animatedStyle} = useKeyboardPush()
 
   //For Otp
   const [otpCode, setOTPCode] = useState('');
@@ -287,10 +295,8 @@ const BusinessDetails = ({navigation, route}) => {
     );
   }
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={{flexGrow: 1}}
-      >
-    <Pressable style={styles.container} onPress={() => Keyboard.dismiss()}>
+    
+    <AnimatedPressable style={[styles.container,animatedStyle]} onPress={() => Keyboard.dismiss()}>
       <StatusBar backgroundColor="#1C1CC2" barStyle="light-content" />
 
       <View style={{height: verticalScale(180)}}>
@@ -565,8 +571,8 @@ const BusinessDetails = ({navigation, route}) => {
           <Image source={ic_next} style={styles.backIcon} />
         </TouchableOpacity>
       </View>
-    </Pressable>
-      </KeyboardAwareScrollView>
+    </AnimatedPressable>
+     
   );
 };
 

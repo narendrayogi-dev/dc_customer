@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useRef, useState, useEffect} from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Image,
   StyleSheet,
@@ -19,25 +19,28 @@ import {
 
 //icon
 import ic_search from '../../assets/image/loupe.png';
-import {useDispatch, useSelector} from 'react-redux';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   applyFilterSort,
   fetchProductRequest,
 } from '../../redux/action/productActions';
-import {ActivityIndicator} from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import AppIcon from '../AppIcon';
 import AppBadge from '../AppBadge';
 import ShimmerLoader from '../ShimmerLoader';
 
-const Header = ({navigation, cartItems}) => {
+const Header = ({ navigation, cartItems }) => {
   const inset = useSafeAreaInsets();
   const dispatch = useDispatch();
 
-  const {allProductsData, loader} = useSelector(state => state.product);
+  const { allProductsData, loader } = useSelector(state => state.product);
 
-  const {homeData, isLoading, error} = useSelector(state => state.home);
-  const {cart_detail, categories, profile} = homeData;
+  const { homeData, isLoading, error } = useSelector(state => state.home);
+  const { cart_detail, categories, profile } = homeData;
+
+  const cartCount = cart_detail?.cart_count ?? 0;
+  const cartAmount = cart_detail?.cart_amount ?? 0;
 
   // console.log('catego',categories)
   //Custom Dropdown
@@ -112,10 +115,10 @@ const Header = ({navigation, cartItems}) => {
   const handlePick = async item => {
     // console.log('@@@', item);
     if (item.name) {
-      navigation.navigate('ProductDetails', {id: item.id});
+      navigation.navigate('ProductDetails', { id: item.id });
     } else if (item.title) {
       navigation.navigate('AllProductsScreen');
-      dispatch(applyFilterSort({filterBy: item.id}));
+      dispatch(applyFilterSort({ filterBy: item.id }));
     }
     setCheck(false);
     setItems([]);
@@ -128,49 +131,42 @@ const Header = ({navigation, cartItems}) => {
           disabled={isLoading}
           onPress={() => {
             navigation.navigate('DrawerScreen');
-          }}>
+          }}
+        >
           <AppIcon size={wp(8.5)} name="menu" type="ion-icons" color="#999" />
         </TouchableOpacity>
 
         {isLoading && !profile.active_store_name ? (
-         <ShimmerLoader
-  loading={isLoading}
-  width={wp(30)}
-  height={hp(2.5)}
-  borderRadius={3}
-  shimmerColors={['#999', '#b5b5b5', '#999']}
-/>
-
+          <ShimmerLoader
+            loading={isLoading}
+            width={wp(30)}
+            height={hp(2.5)}
+            borderRadius={3}
+            shimmerColors={['#999', '#b5b5b5', '#999']}
+          />
         ) : (
           <Text style={headerStyle.title}>
             {profile.active_store_name || 'No store access'}
           </Text>
         )}
 
-        <TouchableOpacity onPress={() => navigation.navigate('MyCart')}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('MyCart')}
+          style={headerStyle.cartWrapper}
+        >
           <AppIcon type="fa" name="shopping-cart" size={wp(8.5)} />
-          <AppBadge
-            value={cart_detail?.cart_count || 0}
-            status="error"
-            style={headerStyle.badgeContainer}
-          />
-          <AppBadge
-            value={`₹ ${cart_detail?.cart_amount || 0}`}
-            status=""
-            style={[
-              headerStyle.badgeContainer1,
-              {
-                left:
-                  cart_detail?.cart_amount?.toString().length < 5 ? -30 : -55,
-              },
-            ]}
-            badgeStyle={{
-              width:
-                cart_detail?.cart_amount?.toString().length < 5
-                  ? wp(13)
-                  : wp(17),
-            }}
-          />
+
+          {/* Count */}
+          {cartCount > 0 && (
+            <View style={headerStyle.countBubble}>
+              <Text style={headerStyle.countText}>{cartCount}</Text>
+            </View>
+          )}
+
+          {/* Amount */}
+          <View style={headerStyle.amountBox}>
+            <Text style={headerStyle.amountText}>₹ {cartAmount}</Text>
+          </View>
         </TouchableOpacity>
       </View>
       <TouchableOpacity
@@ -178,7 +174,8 @@ const Header = ({navigation, cartItems}) => {
         onPress={handleEnableSearch}
         testID="searchContainerButton"
         activeOpacity={0.8}
-        style={headerStyle.searchContainer}>
+        style={headerStyle.searchContainer}
+      >
         <Image source={ic_search} style={headerStyle.searchIcon} />
         <Text style={headerStyle.searchInput}>Search...</Text>
         <Modal
@@ -186,13 +183,14 @@ const Header = ({navigation, cartItems}) => {
           onBackButtonPress={() => {
             setCheck(false);
           }}
-          style={{paddingTop: inset.top}}
+          style={{ paddingTop: inset.top }}
           isVisible={check}
           onBackdropPress={() => {
             setCheck(false);
-          }}>
+          }}
+        >
           {/* FOR IOS BEHAVIOR == PADDING */}
-          <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
             <View style={headerStyle.dropdownList}>
               <TouchableOpacity
                 style={{
@@ -205,7 +203,8 @@ const Header = ({navigation, cartItems}) => {
                   setItems([]);
                   setSearchText('');
                   setCheck(false);
-                }}>
+                }}
+              >
                 <AppIcon
                   activeOpacity={1}
                   type="entypo"
@@ -244,7 +243,8 @@ const Header = ({navigation, cartItems}) => {
                       color: '#000',
                       fontSize: 16,
                       textAlign: 'center',
-                    }}>
+                    }}
+                  >
                     Please wait...
                   </Text>
                 </>
@@ -252,7 +252,7 @@ const Header = ({navigation, cartItems}) => {
                 <FlatList
                   keyExtractor={(item, index) => item?.id || index}
                   data={items}
-                  renderItem={({item}) => {
+                  renderItem={({ item }) => {
                     return (
                       <TouchableOpacity
                         style={{
@@ -264,7 +264,8 @@ const Header = ({navigation, cartItems}) => {
                           borderRadius: wp(0.5),
                           flexDirection: 'row',
                         }}
-                        onPress={() => handlePick(item)}>
+                        onPress={() => handlePick(item)}
+                      >
                         {/* <Image source={ic_down} style={headerStyle.dropDownIcon} /> */}
 
                         <Text
@@ -272,7 +273,8 @@ const Header = ({navigation, cartItems}) => {
                             alignSelf: 'center',
                             marginLeft: wp(2),
                             textTransform: 'capitalize',
-                          }}>
+                          }}
+                        >
                           {item.name || item.title}
                         </Text>
                       </TouchableOpacity>
@@ -340,7 +342,7 @@ const headerStyle = StyleSheet.create({
     elevation: 7,
     shadowOpacity: 0.4,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     overflow: 'visible',
   },
   searchInput: {
@@ -360,5 +362,47 @@ const headerStyle = StyleSheet.create({
     borderRadius: hp(0.6),
     paddingHorizontal: wp(3),
     paddingVertical: hp(2),
+  },
+
+  // cart
+
+  cartWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+  },
+
+  countBubble: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: '#e53935',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+
+  countText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+
+  amountBox: {
+    position: 'absolute',
+    left: -50,
+    backgroundColor: 'gray',
+    paddingHorizontal: wp(2.5),
+    paddingVertical: wp(0.8),
+    borderRadius: 6,
+  },
+
+  amountText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fff',
   },
 });

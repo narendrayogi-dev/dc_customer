@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useState, useRef, useEffect, memo} from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,6 +14,7 @@ import {
   RefreshControl,
   KeyboardAvoidingView,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 
 import Gradient from '../components/Gradient';
@@ -24,7 +25,7 @@ import {
 } from 'react-native-responsive-screen';
 
 //REDUX
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchDeleteStoreRequest,
   fetchStoresRequest,
@@ -32,10 +33,10 @@ import {
   storeJustUpdated,
 } from '../redux/action/storeActions';
 
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {async_keys, getData, storeData} from '../api/UserPreference';
-import {showSnack} from '../components/Snackbar';
-import {BASE_URL, makeRequest} from '../api/ApiInfo';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { async_keys, getData, storeData } from '../api/UserPreference';
+import { showSnack } from '../components/Snackbar';
+import { BASE_URL, makeRequest } from '../api/ApiInfo';
 import {
   fetchNewArrivalProductRequest,
   fetchProductRequest,
@@ -43,7 +44,7 @@ import {
   modifyFilterProduct,
 } from '../redux/action/productActions';
 import FastImage from '@d11/react-native-fast-image';
-import {fetchProfileDataRequest} from '../redux/action/profileActions';
+import { fetchProfileDataRequest } from '../redux/action/profileActions';
 
 //icon
 import ic_search from '../assets/image/loupe.png';
@@ -51,17 +52,21 @@ import ic_link from '../assets/icons/link.png';
 import img_shop from '../assets/image/shops.png';
 import ic_store_placeholder from '../assets/icons/store_placeholder.jpg';
 import ic_prod_placholder from '../assets/icons/diamond.png';
-import {fetchHomeDataRequest} from '../redux/action/homeActions';
+import { fetchHomeDataRequest } from '../redux/action/homeActions';
 import PreventAnyTap from '../components/PreventAnyTap';
-import {LinkStoreView} from './exploreShopApi/exploreShopView';
-import {linkStoreData} from './exploreShopApi/exploreShopPresenter';
+import { LinkStoreView } from './exploreShopApi/exploreShopView';
+import { linkStoreData } from './exploreShopApi/exploreShopPresenter';
 import AppIcon from '../components/AppIcon';
 import { useIsFocused } from '@react-navigation/native';
 import ShimmerLoader from '../components/ShimmerLoader';
 import { resetTo } from '../routes/NavigationService';
+import { useKeyboardPush } from '../hooks/useKeyboardPush';
+import { createAnimatedComponent } from 'react-native-reanimated';
 
+
+const AnimatedPressable = createAnimatedComponent(Pressable)
 const ExploreShops = props => {
-  const {navigation} = props;
+  const { navigation } = props;
 
   const [storeCode, setStoreCode] = useState('');
   const [tabPosition, setTabPosition] = useState(1);
@@ -76,8 +81,9 @@ const ExploreShops = props => {
   const [number, setNummber] = useState();
   const [message, setMessage] = useState();
   const inset = useSafeAreaInsets();
+  const { animatedStyle } = useKeyboardPush();
 
-  const isFocused  = useIsFocused()
+  const isFocused = useIsFocused();
 
   //GETTING DATA FROM REDUX
   const dispatch = useDispatch();
@@ -90,7 +96,7 @@ const ExploreShops = props => {
     allStoreList,
   } = useSelector(state => state.store);
 
-  const {profile} = useSelector(state => state.home.homeData);
+  const { profile } = useSelector(state => state.home.homeData);
 
   console.log(
     'profile',
@@ -169,10 +175,10 @@ const ExploreShops = props => {
         text: 'No',
         style: 'cancel',
       },
-      {text: 'Yes', onPress: () => deleteUser()},
+      { text: 'Yes', onPress: () => deleteUser() },
     ]);
     const deleteUser = () => {
-      dispatch(fetchDeleteStoreRequest({id}));
+      dispatch(fetchDeleteStoreRequest({ id }));
     };
   };
 
@@ -226,14 +232,16 @@ const ExploreShops = props => {
 
       const response = await makeRequest(
         `${BASE_URL}update_active_store`,
-        {store_code},
+        { store_code },
         true,
       );
 
       if (response) {
-        const {Message, Status} = response;
+        const { Message, Status } = response;
         if (Status === true) {
-          navigation.navigate('HomeScreen');
+          resetTo('Home', {
+            screen:"HomeScreen"
+          });
           dispatch(modifyAllProduct([]));
           dispatch(storeJustUpdated(true));
           showSnack(Message);
@@ -275,119 +283,16 @@ const ExploreShops = props => {
         <Text style={styles.notActiveMobileText}>
           Your mobile No. is: {profile?.mobile}
         </Text>
-
-        {/* {activeStoreList.length === 0 && (
-          <View
-            style={{
-              backgroundColor: 'white',
-              marginTop: 30,
-              elevation: 5,
-              paddingVertical: 15,
-              paddingHorizontal: 20,
-              marginHorizontal: 15,
-            }}>
-            <Text
-              style={{
-                color: 'black',
-                fontSize: 20,
-                textAlign: 'center',
-              }}>
-              Contact US
-            </Text>
-            <Text
-              style={{
-                color: 'black',
-                fontSize: 14,
-                textAlign: 'center',
-              }}>
-              Fill the form and we'll get back to you soon
-            </Text>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 20,
-              }}>
-              <View style={{}}>
-                <Text>First Name</Text>
-                <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      width: 150,
-                    },
-                  ]}
-                  value={firstName}
-                  onChangeText={text => setFirstName(text)}
-                  placeholder="Enter First Name"
-                />
-              </View>
-              <View>
-                <Text>Last Name</Text>
-
-                <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      width: 150,
-                    },
-                  ]}
-                  placeholder="Enter Last Name"
-                  value={lastName}
-                  onChangeText={value => setLastName(value)}
-                />
-              </View>
-            </View>
-
-            <View>
-              <Text>Email</Text>
-
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Email"
-                value={email}
-                onChangeText={value => setEmail(value)}
-              />
-            </View>
-            <View>
-              <Text>Mobile</Text>
-
-              <TextInput
-                style={styles.input}
-                placeholder="Enter Mobile"
-                value={number}
-                onChangeText={value => setNummber(value)}
-              />
-            </View>
-            <View>
-              <Text>Message</Text>
-
-              <TextInput
-                style={{
-                  height: 80,
-                  borderColor: '#ccc',
-                  borderWidth: 1,
-                  paddingHorizontal: 10,
-                  marginBottom: 20,
-                }}
-                placeholder="Enter Message"
-                value={message}
-                onChangeText={value => setMessage(value)}
-              />
-            </View>
-          </View>
-        )} */}
       </View>
     );
 
   //LIST RENDER ACTIVE
-  const renderItemActive = ({item, index}) => (
+  const renderItemActive = ({ item, index }) => (
     <TouchableOpacity
       key={index}
       activeOpacity={0.7}
       disabled={profile?.active_store_code !== item.store_code}
-      onPress={() => resetTo('Home', {screen: 'HomeScreen'})}
+      onPress={() => resetTo('Home', { screen: 'HomeScreen' })}
       style={[
         styles.shopContainer,
         profile?.active_store_code === item.store_code && {
@@ -395,9 +300,10 @@ const ExploreShops = props => {
           elevation: 0,
           shadowOpacity: 0,
           shadowRadius: 0,
-          shadowOffset: {width: 0, height: 0},
+          shadowOffset: { width: 0, height: 0 },
         },
-      ]}>
+      ]}
+    >
       {!isLoading && (
         <AppIcon
           type="antdesign"
@@ -411,25 +317,24 @@ const ExploreShops = props => {
             right: wp(0.4),
             top: wp(0.4),
           }}
-          iconStyle={{fontSize: wp(4.5)}}
+          iconStyle={{ fontSize: wp(4.5) }}
           onPress={() => handleDelete(item.id)}
         />
       )}
 
       {isLoading ? (
         <ShimmerLoader
-  loading={true} // or isLoading
-  width={hp(13)}
-  height={hp(13)}
-  borderRadius={wp(1)}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+          loading={true} // or isLoading
+          width={hp(13)}
+          height={hp(13)}
+          borderRadius={wp(1)}
+          shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+        />
       ) : imageError.includes(item.id) ? (
         <Image source={ic_store_placeholder} style={styles.shopImage} />
       ) : (
         <Image
-          source={{uri: item.store_image}}
+          source={{ uri: item.store_image }}
           style={styles.shopImage}
           onError={() => handleImageError(item.id)}
           onLoad={() => onImageErrorClear(item.id)}
@@ -439,51 +344,47 @@ const ExploreShops = props => {
       <View style={styles.descriptionContainer}>
         {isLoading ? (
           <ShimmerLoader
-  loading={true} // or isLoading
-  width={wp(50)}
-  height={wp(3)}
-  borderRadius={wp(20)}
-  style={{
-    marginLeft: wp(3),
-    marginVertical: wp(1),
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+            loading={true} // or isLoading
+            width={wp(50)}
+            height={wp(3)}
+            borderRadius={wp(20)}
+            style={{
+              marginLeft: wp(3),
+              marginVertical: wp(1),
+            }}
+            shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+          />
         ) : (
           <Text style={styles.shopName}>{item.store_name}</Text>
         )}
         {isLoading ? (
           <ShimmerLoader
-  loading={true} // or isLoading
-  width={wp(24)}
-  height={wp(3)}
-  borderRadius={wp(20)}
-  style={{
-    marginLeft: wp(3),
-    marginVertical: wp(1),
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+            loading={true} // or isLoading
+            width={wp(24)}
+            height={wp(3)}
+            borderRadius={wp(20)}
+            style={{
+              marginLeft: wp(3),
+              marginVertical: wp(1),
+            }}
+            shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+          />
         ) : (
           <Text style={styles.vendorName}>By {item.vendor_name}</Text>
         )}
-       
 
         {isLoading ? (
           <ShimmerLoader
-  loading={true} // or isLoading
-  width={wp(28)}
-  height={wp(3)}
-  borderRadius={wp(20)}
-  style={{
-    marginLeft: wp(3),
-    marginVertical: wp(1),
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+            loading={true} // or isLoading
+            width={wp(28)}
+            height={wp(3)}
+            borderRadius={wp(20)}
+            style={{
+              marginLeft: wp(3),
+              marginVertical: wp(1),
+            }}
+            shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+          />
         ) : (
           <Text style={styles.storeCode}>Store Code: {item.store_code}</Text>
         )}
@@ -492,14 +393,15 @@ const ExploreShops = props => {
       {!isLoading && profile?.active_store_code !== item.store_code && (
         <TouchableOpacity
           style={[styles.viewMoreButton]}
-          onPress={() => handleSelectedStore(item.store_code)}>
+          onPress={() => handleSelectedStore(item.store_code)}
+        >
           <Text style={styles.viewMoreText}>View Store</Text>
         </TouchableOpacity>
       )}
     </TouchableOpacity>
   );
   //LIST RENDER PENDING
-  const renderItemPending = ({item, index}) => (
+  const renderItemPending = ({ item, index }) => (
     <View key={index} style={styles.shopContainer}>
       {!isLoading && (
         <AppIcon
@@ -514,20 +416,19 @@ const ExploreShops = props => {
             right: wp(0.4),
             top: wp(0.4),
           }}
-          iconStyle={{fontSize: wp(4.5)}}
+          iconStyle={{ fontSize: wp(4.5) }}
           onPress={() => handleDelete(item.id)}
         />
       )}
 
       {isLoading ? (
         <ShimmerLoader
-  loading={true} // or isLoading
-  width={hp(13)}
-  height={hp(13)}
-  borderRadius={wp(1)}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+          loading={true} // or isLoading
+          width={hp(13)}
+          height={hp(13)}
+          borderRadius={wp(1)}
+          shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+        />
       ) : (
         <FastImage
           style={styles.shopImage}
@@ -544,63 +445,60 @@ const ExploreShops = props => {
       <View style={styles.descriptionContainer}>
         {isLoading ? (
           <ShimmerLoader
-  loading={true} // or isLoading
-  width={wp(50)}
-  height={wp(3)}
-  borderRadius={wp(20)}
-  style={{
-    marginLeft: wp(3),
-    marginVertical: wp(1),
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+            loading={true} // or isLoading
+            width={wp(50)}
+            height={wp(3)}
+            borderRadius={wp(20)}
+            style={{
+              marginLeft: wp(3),
+              marginVertical: wp(1),
+            }}
+            shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+          />
         ) : (
           <Text style={styles.shopName}>{item.store_name}</Text>
         )}
         {isLoading ? (
-         <ShimmerLoader
-  loading={true} // or isLoading
-  width={wp(30)}
-  height={wp(3)}
-  borderRadius={wp(20)}
-  style={{
-    marginLeft: wp(3),
-    marginVertical: wp(1),
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+          <ShimmerLoader
+            loading={true} // or isLoading
+            width={wp(30)}
+            height={wp(3)}
+            borderRadius={wp(20)}
+            style={{
+              marginLeft: wp(3),
+              marginVertical: wp(1),
+            }}
+            shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+          />
         ) : (
           <Text style={styles.vendorName}>by {item.vendor_name}</Text>
         )}
         {isLoading ? (
           <View>
-  <ShimmerLoader
-    loading={isLoading} // or true
-    width={wp(40)}
-    height={wp(3)}
-    borderRadius={wp(20)}
-    style={{
-      marginLeft: wp(3),
-      marginVertical: wp(1),
-    }}
-    shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-  />
+            <ShimmerLoader
+              loading={isLoading} // or true
+              width={wp(40)}
+              height={wp(3)}
+              borderRadius={wp(20)}
+              style={{
+                marginLeft: wp(3),
+                marginVertical: wp(1),
+              }}
+              shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+            />
 
-  <ShimmerLoader
-    loading={isLoading} // or true
-    width={wp(42)}
-    height={wp(3)}
-    borderRadius={wp(20)}
-    style={{
-      marginLeft: wp(3),
-      marginVertical: wp(1),
-    }}
-    shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-  />
-</View>
-
+            <ShimmerLoader
+              loading={isLoading} // or true
+              width={wp(42)}
+              height={wp(3)}
+              borderRadius={wp(20)}
+              style={{
+                marginLeft: wp(3),
+                marginVertical: wp(1),
+              }}
+              shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+            />
+          </View>
         ) : (
           <Text style={styles.description}>
             A Moment of Precious Craft.{`\n`}Style with Precious Simplicity
@@ -609,17 +507,16 @@ const ExploreShops = props => {
 
         {isLoading ? (
           <ShimmerLoader
-  loading={isLoading} // or true
-  width={wp(33)}
-  height={wp(3)}
-  borderRadius={wp(20)}
-  style={{
-    marginLeft: wp(3),
-    marginVertical: wp(1),
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+            loading={isLoading} // or true
+            width={wp(33)}
+            height={wp(3)}
+            borderRadius={wp(20)}
+            style={{
+              marginLeft: wp(3),
+              marginVertical: wp(1),
+            }}
+            shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+          />
         ) : (
           <Text style={styles.storeCode}>Store Code: {item.store_code}</Text>
         )}
@@ -631,7 +528,8 @@ const ExploreShops = props => {
 
   return (
     <Gradient fromColor="#DBD9F6" toColor="#fff" gh="29%">
-      <View style={[styles.container, {paddingTop: inset.top}]}>
+      <AnimatedPressable style={[{ flex: 1 }, animatedStyle]}>
+      <View style={[styles.container, { paddingTop: inset.top , paddingBottom:inset?.bottom + 50, }]}>
         <Header
           title="Explore Shops"
           width={wp(71)}
@@ -643,11 +541,15 @@ const ExploreShops = props => {
 
         {(switchStoreLoader || loader) && <PreventAnyTap />}
 
+
+        
+
         <View style={styles.tabButtonContainer}>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={activeTab}
-            style={buttonPosition}>
+            style={buttonPosition}
+          >
             <Text style={buttonTextPosition}>Active</Text>
           </TouchableOpacity>
 
@@ -658,13 +560,15 @@ const ExploreShops = props => {
               tabPosition === 2
                 ? styles.activeTabButton
                 : styles.pendingTabButton
-            }>
+            }
+          >
             <Text
               style={
                 tabPosition === 2
                   ? styles.activeTabButtonText
                   : styles.pendingTabButtonText
-              }>
+              }
+            >
               Pending
             </Text>
           </TouchableOpacity>
@@ -691,7 +595,7 @@ const ExploreShops = props => {
               name="remove"
               color="#999"
               size={wp(2)}
-              iconStyle={{fontSize: wp(4)}}
+              iconStyle={{ fontSize: wp(4) }}
               containerStyle={{}}
             />
           )}
@@ -702,8 +606,9 @@ const ExploreShops = props => {
           horizontal
           showsHorizontalScrollIndicator={false}
           pagingEnabled
-          onMomentumScrollEnd={handleTabPosition}>
-          <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+          onMomentumScrollEnd={handleTabPosition}
+        >
+          <View style={{ flex: 1 }} behavior="padding">
             <View style={styles.homeContainer}>
               {!activeStoreList.length > 0 && (
                 <View
@@ -713,7 +618,8 @@ const ExploreShops = props => {
                     alignItems: 'center',
                     width: wp(100),
                     // borderWidth: 1,
-                  }}>
+                  }}
+                >
                   <Text>No stores to display</Text>
                 </View>
               )}
@@ -730,13 +636,13 @@ const ExploreShops = props => {
                     colors={colors}
                   />
                 }
-                contentContainerStyle={{paddingBottom: hp(10)}}
+                contentContainerStyle={{ paddingBottom: hp(10) }}
                 keyboardShouldPersistTaps="handled"
               />
             </View>
-          </KeyboardAvoidingView>
+          </View>
 
-          <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+          <View style={{ flex: 1 }} behavior="padding">
             <View style={styles.homeContainer}>
               {!otherStatus.length > 0 && (
                 <View
@@ -745,7 +651,8 @@ const ExploreShops = props => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     width: wp(100),
-                  }}>
+                  }}
+                >
                   <Text>No stores to display</Text>
                 </View>
               )}
@@ -761,232 +668,45 @@ const ExploreShops = props => {
                     colors={colors}
                   />
                 }
-                contentContainerStyle={{paddingBottom: hp(10)}}
+                contentContainerStyle={{ paddingBottom: hp(10) }}
               />
             </View>
-          </KeyboardAvoidingView>
+          </View>
         </ScrollView>
-<KeyboardAvoidingView>
-        <View style={styles.linkStoreContainer}>
-          {showStoreCodeInput && (
-            <View style={styles.storeCodeInputContainer}>
-              <TextInput
-                placeholder="Store Code/Number"
-                placeholderTextColor="#999"
-                style={styles.storeCodeInput}
-                // maxLength={25}`
-                keyboardType="number-pad"
-                onChangeText={handleStoreCode}
-                value={storeCode}
-              />
-            </View>
-          )}
 
-          {/* Always show the button regardless of input visibility */}
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={styles.storeLinkButton}
-            onPress={handleLinkStore}>
-            <Image source={ic_link} style={styles.storeLinkImage} />
-            <Text style={styles.storeLinkButtonText}>Link New Store</Text>
-          </TouchableOpacity>
-        </View>
-</KeyboardAvoidingView>
+          <View style={styles.linkStoreContainer}>
+            {showStoreCodeInput && (
+              <View style={styles.storeCodeInputContainer}>
+                <TextInput
+                  placeholder="Store Code/Number"
+                  placeholderTextColor="#999"
+                  style={styles.storeCodeInput}
+                  // maxLength={25}`
+                  keyboardType="number-pad"
+                  onChangeText={handleStoreCode}
+                  value={storeCode}
+                />
+              </View>
+            )}
 
+            {/* Always show the button regardless of input visibility */}
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.storeLinkButton}
+              onPress={handleLinkStore}
+            >
+              <Image source={ic_link} style={styles.storeLinkImage} />
+              <Text style={styles.storeLinkButtonText}>Link New Store</Text>
+            </TouchableOpacity>
+          </View>
+       
       </View>
+      </AnimatedPressable>
     </Gradient>
   );
 };
 
 export default memo(ExploreShops);
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   searchContainer: {
-//     height: hp(4),
-//     width: wp(83.5),
-//     borderColor: '#c1c1c1',
-//     borderWidth: 0.3,
-//     borderRadius: hp(3),
-//     alignSelf: 'center',
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     paddingLeft: wp(4),
-//     backgroundColor: '#fff',
-//     elevation: 5,
-//     shadowOpacity: 0.3,
-//     shadowRadius: 5,
-//     shadowOffset: {width: 5, height: 5},
-//   },
-//   searchIcon: {
-//     width: 20,
-//     height: 20,
-//   },
-//   searchInput: {
-//     flex: 1,
-//     height: hp(5.8),
-//     color: '#000',
-//     marginLeft: wp(2),
-//     fontFamily: 'Roboto-Regular',
-//   },
-//   tabButtonContainer: {
-//     flexDirection: 'row',
-//     height: hp(6),
-//     overflow: 'hidden',
-//     backgroundColor: '#f1f1f1',
-//     elevation: 5,
-//     shadowOpacity: 0.3,
-//     shadowRadius: 5,
-//     shadowOffset: {width: 5, height: 5},
-//     marginVertical: hp(2),
-//   },
-//   activeTabButton: {
-//     flex: 1,
-//     backgroundColor: '#F6CE4B',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   pendingTabButton: {
-//     flex: 1,
-//     backgroundColor: '#838383',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   activeTabButtonText: {
-//     fontFamily: 'Roboto-Bold',
-//     color: '#333',
-//   },
-//   pendingTabButtonText: {
-//     color: '#fff',
-//     fontFamily: 'Roboto-Bold',
-//   },
-//   homeContainer: {
-//     flex: 1,
-//     // marginVertical: hp(1),
-//     // alignItems: 'center',
-//   },
-//   shopContainer: {
-//     flexDirection: 'row',
-//     width: wp(90),
-//     backgroundColor: '#fff',
-//     elevation: 7,
-//     shadowOpacity: 0.3,
-//     shadowRadius: 5,
-//     shadowOffset: {width: 5, height: 5},
-//     alignSelf: 'center',
-//     alignItems: 'center',
-//     marginHorizontal: wp(5),
-//     padding: hp(2),
-//     paddingBottom: hp(3),
-//     borderRadius: wp(1.5),
-//     marginVertical: hp(1),
-//   },
-//   shopImage: {
-//     width: wp(26),
-//     height: hp(13),
-//   },
-//   descriptionContainer: {
-//     marginLeft: wp(2),
-//   },
-//   shopName: {
-//     fontFamily: 'Roboto-Bold',
-//     fontSize: wp(5),
-//     lineHeight: wp(5),
-//   },
-//   vendorName: {
-//     fontFamily: 'Roboto-Regular',
-//     fontSize: wp(3),
-//     color: '#999',
-//     marginVertical: wp(0.5),
-//   },
-//   description: {
-//     fontFamily: 'Roboto-Medium',
-//     fontSize: wp(3.2),
-//     color: '#999',
-//   },
-//   storeCode: {
-//     fontFamily: 'Roboto-Regular',
-//     fontSize: wp(3.3),
-//     marginVertical: wp(0.5),
-//     fontWeight: '700',
-//   },
-//   viewMoreButton: {
-//     backgroundColor: '#333',
-//     width: wp(22),
-//     height: hp(3.5),
-//     borderRadius: hp(2),
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     position: 'absolute',
-//     bottom: hp(1),
-//     right: wp(4),
-//     elevation: 3,
-//   },
-//   viewMoreText: {
-//     fontFamily: 'Roboto-Bold',
-//     fontSize: wp(3.3),
-//     color: '#fff',
-//   },
-//   pendingText: {
-//     color: '#F6CE4B',
-//     fontFamily: 'Roboto-Black',
-//     fontSize: wp(4.3),
-//     position: 'absolute',
-//     bottom: hp(1),
-//     right: wp(4),
-//   },
-//   linkStoreContainer: {
-//     paddingBottom: hp(2),
-//     paddingHorizontal: wp(10),
-//     backgroundColor: '#c1c1c1',
-//     bottom: 50,
-//   },
-//   storeCodeInputContainer: {
-//     height: hp(5.5),
-//     backgroundColor: '#fff',
-//     borderRadius: hp(1),
-//     elevation: 5,
-//     marginVertical: hp(2),
-//     paddingLeft: wp(2),
-//   },
-//   storeCodeInput: {
-//     flex: 1,
-//     color: '#000',
-//     fontFamily: 'Roboto-Medium',
-//   },
-//   storeLinkButton: {
-//     backgroundColor: '#35BE87',
-//     height: hp(5.5),
-//     flexDirection: 'row',
-//     borderRadius: hp(1),
-//     elevation: 3,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginBottom: hp(1),
-//   },
-//   storeLinkImage: {
-//     width: wp(6),
-//     aspectRatio: 1 / 1,
-//     marginRight: wp(2),
-//   },
-//   storeLinkButtonText: {
-//     color: '#fff',
-//     fontFamily: 'Roboto-Bold',
-//     fontSize: wp(4.6),
-//   },
-//   deleteButton: {
-//     position: 'absolute',
-//     zIndex: 1,
-//     right: wp(-0.6),
-//     top: wp(-1),
-//   },
-//   verticalScroll: {
-//     flex: 1,
-//     marginTop: hp(1),
-//   },
-// });
 
 const styles = StyleSheet.create({
   input: {
@@ -1035,7 +755,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    shadowOffset: {width: 5, height: 5},
+    shadowOffset: { width: 5, height: 5 },
   },
   searchIcon: {
     width: 20,
@@ -1056,7 +776,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    shadowOffset: {width: 5, height: 5},
+    shadowOffset: { width: 5, height: 5 },
     marginVertical: hp(2),
   },
   activeTabButton: {
@@ -1091,7 +811,7 @@ const styles = StyleSheet.create({
     elevation: 7,
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    shadowOffset: {width: 5, height: 5},
+    shadowOffset: { width: 5, height: 5 },
     alignSelf: 'center',
     alignItems: 'center',
     marginHorizontal: wp(5),
@@ -1147,7 +867,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
   },
   viewMoreText: {
     fontFamily: 'Roboto-Bold',
@@ -1163,10 +883,10 @@ const styles = StyleSheet.create({
     right: wp(4),
   },
   linkStoreContainer: {
-    paddingBottom: hp(2),
+    // paddingBottom: hp(2),
     // paddingHorizontal: wp(10),
     backgroundColor: '#c1c1c1',
-    bottom: 50,
+    // bottom: 50,
     // flexDirection: 'row',
     // justifyContent: 'center',
     // alignItems: 'center',
@@ -1178,7 +898,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     marginVertical: hp(1.5),
     paddingLeft: wp(2),
     marginHorizontal: wp(8),
@@ -1198,7 +918,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: wp(1),

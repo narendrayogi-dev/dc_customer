@@ -42,6 +42,11 @@ import { showSnack } from '../components/Snackbar';
 import AppIcon from '../components/AppIcon';
 import { useIsFocused } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { createAnimatedComponent } from 'react-native-reanimated';
+import { useKeyboardPush } from '../hooks/useKeyboardPush';
+
+const AnimatedPressable = createAnimatedComponent(Pressable)
+
 
 const PersonalDetails = ({ navigation }) => {
   const maximumDate = new Date();
@@ -57,6 +62,7 @@ const PersonalDetails = ({ navigation }) => {
     { label: 'Female', value: 'female' },
     { label: 'Other', value: 'other' },
   ]);
+  const {animatedStyle} = useKeyboardPush()
 
   const handleName = text => {
     setNameError('');
@@ -184,15 +190,8 @@ const PersonalDetails = ({ navigation }) => {
     );
   }
   return (
-    <KeyboardAwareScrollView
-        keyboardShouldPersistTaps="handled"
-        bounces={false}
-        contentContainerStyle={{
-          flexGrow: 1,
-          // justifyContent: 'center',
-          // alignItems: 'center',
-        }}>
-    {/* <Pressable style={styles.container} onPress={() => Keyboard.dismiss()}> */}
+  
+     <AnimatedPressable style={[styles.container, animatedStyle]} onPress={() => Keyboard.dismiss()}> 
       <StatusBar
         backgroundColor="#1C1CC2"
         barStyle={os === 'android' ? 'light-content' : 'dark-content'}
@@ -322,8 +321,8 @@ const PersonalDetails = ({ navigation }) => {
         </View>
         <Image source={ic_next} style={styles.backIcon} />
       </TouchableOpacity>
-    {/* </Pressable> */}
-    </KeyboardAwareScrollView>
+    </AnimatedPressable>
+  
   );
 };
 

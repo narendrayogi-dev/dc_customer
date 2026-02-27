@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable eqeqeq */
 /* eslint-disable prettier/prettier */
-import React, {useState, useEffect, memo} from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -19,7 +19,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 //component
 import Gradient from '../components/Gradient';
@@ -30,9 +30,9 @@ import img_product from '../assets/image/product.png';
 import ic_next from '../assets/image/forward.png';
 import ic_back from '../assets/image/back.png';
 import Swiper from 'react-native-swiper';
-import {BASE_URL, makeRequest} from '../api/ApiInfo';
-import {showSnack} from '../components/Snackbar';
-import {useDispatch, useSelector} from 'react-redux';
+import { BASE_URL, makeRequest } from '../api/ApiInfo';
+import { showSnack } from '../components/Snackbar';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   applyPage,
   changeIndexOfProduct,
@@ -46,18 +46,19 @@ import {
   modifyNewArriveProduct,
 } from '../redux/action/homeActions';
 import CategoryVariants from '../components/categoryVariants';
-import {ProductDetailView} from './productDetailApi/productDetailView';
-import {ProductDetailData} from './productDetailApi/productDetailPresenter';
+import { ProductDetailView } from './productDetailApi/productDetailView';
+import { ProductDetailData } from './productDetailApi/productDetailPresenter';
 import AppIcon from '../components/AppIcon';
 import { useIsFocused } from '@react-navigation/native';
 import AppBadge from '../components/AppBadge';
 import ShimmerLoader from '../components/ShimmerLoader';
+import { goBack, navigate } from '../routes/NavigationService';
 
 const ProductDetails = props => {
   console.log('Props on product route.params', props);
-  const {navigation, route} = props;
+  const { navigation, route } = props;
 
-  const {params} = route;
+  const { params } = route;
   console.log('Params on this screen', params);
 
   const [addingLoader, setAddingLoader] = useState(false);
@@ -82,7 +83,7 @@ const ProductDetails = props => {
 
   const [selectedVariant, setSelectedVariants] = useState(null);
 
-  const {arrival_products, cart_detail} = useSelector(
+  const { arrival_products, cart_detail } = useSelector(
     state => state.home.homeData,
   );
   const {
@@ -97,6 +98,8 @@ const ProductDetails = props => {
     loader,
   } = useSelector(state => state.product);
 
+  const cartCount = cart_detail?.cart_count ?? 0;
+  const cartAmount = cart_detail?.cart_amount ?? 0;
   console.log('All Data', {
     arrival_products,
     filteredProductsData,
@@ -199,7 +202,7 @@ const ProductDetails = props => {
       console.log('ppppp0000', response);
 
       if (response) {
-        const {Status, Message, Data} = response;
+        const { Status, Message, Data } = response;
         console.log('llllllllliiiii', response);
 
         if (Status === true) {
@@ -409,7 +412,7 @@ const ProductDetails = props => {
       console.log('response of add cart 989898', response);
 
       if (response) {
-        const {Status, Message, Data} = response;
+        const { Status, Message, Data } = response;
 
         if (Status === true) {
           setButtonText('Added');
@@ -418,7 +421,7 @@ const ProductDetails = props => {
           setIsAddedToCart(true);
           showSnack(Message);
           const updatedProd = filteredProductsData.map(item =>
-            item.id === product_id ? {...item, cart_count: 1} : item,
+            item.id === product_id ? { ...item, cart_count: 1 } : item,
           );
           // fetchData();
 
@@ -433,7 +436,7 @@ const ProductDetails = props => {
           dispatch(
             modifyFilterProduct(
               filteredProductsData.map(item =>
-                item.id === product_id ? {...item, cart_count: 1} : item,
+                item.id === product_id ? { ...item, cart_count: 1 } : item,
               ),
             ),
           );
@@ -441,7 +444,7 @@ const ProductDetails = props => {
           dispatch(
             modifyAllProduct(
               allProductsData.map(item =>
-                item.id === product_id ? {...item, cart_count: 1} : item,
+                item.id === product_id ? { ...item, cart_count: 1 } : item,
               ),
             ),
           );
@@ -449,7 +452,7 @@ const ProductDetails = props => {
           dispatch(
             modifyNewArriveProduct(
               arrival_products.map(item =>
-                item.id === product_id ? {...item, cart_count: 1} : item,
+                item.id === product_id ? { ...item, cart_count: 1 } : item,
               ),
             ),
           );
@@ -486,7 +489,7 @@ const ProductDetails = props => {
 
   if (loading) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" backgroundColor="" />
         <Text
           style={{
@@ -494,14 +497,15 @@ const ProductDetails = props => {
             color: '#000',
             fontSize: 16,
             textAlign: 'center',
-          }}>
+          }}
+        >
           Please wait...
         </Text>
       </View>
     );
   }
 
-  const TruncatedText = ({text = '', wordLimit, color}) => {
+  const TruncatedText = ({ text = '', wordLimit, color }) => {
     const wordLimits = wordLimit || 10;
     // Ensure text is a valid string
     const safeText = text ? text : '';
@@ -529,7 +533,8 @@ const ProductDetails = props => {
           <Text
             numberOfLines={2} // Limits text to 3 lines
             ellipsizeMode="tail"
-            style={[styles.text, {color: color || '#fff'}]}>
+            style={[styles.text, { color: color || '#fff' }]}
+          >
             {text}
           </Text>
 
@@ -540,7 +545,8 @@ const ProductDetails = props => {
               fontWeight: 'bold',
               marginTop: 4,
             }}
-            onPress={() => setShowDesciptionModal(true)}>
+            onPress={() => setShowDesciptionModal(true)}
+          >
             Read More
           </Text>
         </TouchableOpacity>
@@ -569,9 +575,10 @@ const ProductDetails = props => {
       contentContainerStyle={styles.container}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }>
+      }
+    >
       <Gradient fromColor="#DBD9F6" toColor="#fff">
-        <View style={[styles.container, {paddingTop: insets.top}]}>
+        <View style={[styles.container, { paddingTop: insets.top }]}>
           {addingLoader && (
             <View
               style={{
@@ -583,7 +590,8 @@ const ProductDetails = props => {
                 backgroundColor: 'rgba(255,255,255, .5)',
                 justifyContent: 'center',
                 alignItems: 'center',
-              }}>
+              }}
+            >
               <ActivityIndicator size="large" color="green" />
               <Text
                 style={{
@@ -591,19 +599,20 @@ const ProductDetails = props => {
                   color: '#000',
                   fontSize: 16,
                   textAlign: 'center',
-                }}>
+                }}
+              >
                 Please wait...
               </Text>
             </View>
           )}
           <View style={styles.header}>
-            <Pressable onPress={() => navigation.pop()}>
+            <Pressable onPress={() => goBack()}>
               <AppIcon
                 raised
                 type="fa"
                 name="arrow-left"
-                size={wp(4)}
-                containerStyle={{margin: 0}}
+                size={wp(5)}
+                containerStyle={{ margin: 0 }}
               />
             </Pressable>
 
@@ -612,44 +621,30 @@ const ProductDetails = props => {
             <View>
               {isLoading ? (
                 <ShimmerLoader
-  loading={isLoading} // or true
-  width={wp(8)}
-  height={hp(5)}
-  borderRadius={wp(1)}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+                  loading={isLoading} 
+                  width={wp(8)}
+                  height={hp(5)}
+                  borderRadius={wp(1)}
+                  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+                />
               ) : (
-                <TouchableOpacity onPress={() => navigation.navigate('MyCart')}>
-                  <AppIcon
-                    type="fa"
-                    name="shopping-cart"
-                    size={wp(8.5)}
-                  />
-                  <AppBadge
-                    value={cart_detail?.cart_count || 0}
-                    status="error"
-                    containerStyle={styles.badgeContainer}
-                  />
-                  <AppBadge
-                    value={`₹ ${cart_detail?.cart_amount || 0}`}
-                    status=""
-                    containerStyle={[
-                      styles.badgeContainer1,
-                      {
-                        left:
-                          cart_detail?.cart_amount?.toString().length < 5
-                            ? -45
-                            : -55,
-                      },
-                    ]}
-                    badgeStyle={{
-                      width:
-                        cart_detail?.cart_amount?.toString().length < 5
-                          ? wp(13)
-                          : wp(17),
-                    }}
-                  />
+                <TouchableOpacity
+                  onPress={() => navigate('Home', {
+                    screen:"MyCart"
+                  })}
+                  style={styles.cartWrapper}
+                >
+
+                  {/* Count bubble */}
+                  <View style={styles.countBubble}>
+                    <Text style={styles.countText}>{cartCount}</Text>
+                  </View>
+
+                  <AppIcon type="fa" name="shopping-cart" style={wp(8.5)} />
+                  {/* Amount */}
+                  <View style={styles.amountBox}>
+                    <Text style={styles.amountText}>₹ {cartAmount}</Text>
+                  </View>
                 </TouchableOpacity>
               )}
             </View>
@@ -663,17 +658,16 @@ const ProductDetails = props => {
             <View style={styles.homeContainer}>
               {isLoading ? (
                 <ShimmerLoader
-  loading={isLoading} // or true
-  width={wp(89.3)}
-  height={wp(89.3)}
-  borderRadius={hp(6)}
-  style={{
-    marginTop: hp(2),
-    alignSelf: 'center',
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+                  loading={isLoading} // or true
+                  width={wp(89.3)}
+                  height={wp(89.3)}
+                  borderRadius={hp(6)}
+                  style={{
+                    marginTop: hp(2),
+                    alignSelf: 'center',
+                  }}
+                  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+                />
               ) : (
                 <View style={styles.productImageContainer}>
                   {data[indexOfProd]?.original_images === '' ? (
@@ -683,7 +677,8 @@ const ProductDetails = props => {
                         width: wp(92),
                         justifyContent: 'center',
                         alignItems: 'center',
-                      }}>
+                      }}
+                    >
                       <Text>NOT AVAILABLE</Text>
                     </View>
                   ) : (
@@ -695,7 +690,8 @@ const ProductDetails = props => {
                           zIndex: 999,
                           left: 10,
                           top: 5,
-                        }}>
+                        }}
+                      >
                         <Text
                           style={{
                             margin: hp(1.1),
@@ -712,7 +708,8 @@ const ProductDetails = props => {
                             color: isOutOfStock(data[indexOfProd])
                               ? 'red'
                               : '#000080',
-                          }}>
+                          }}
+                        >
                           {/* {data[indexOfProd]?.is_limited == 1 &&
                           !Number(data[indexOfProd]?.stock) > 0
                             ? 'Out of stock'
@@ -727,10 +724,11 @@ const ProductDetails = props => {
                         pagingEnabled
                         key={data[indexOfProd]?.original_images?.length}
                         activeDotStyle={[
-                          {top: 18},
-                          data[indexOfProd]?.length < 2 && {display: 'none'},
+                          { top: 18 },
+                          data[indexOfProd]?.length < 2 && { display: 'none' },
                         ]}
-                        dotStyle={{top: 18}}>
+                        dotStyle={{ top: 18 }}
+                      >
                         {data[indexOfProd]?.original_images?.length !== 0 &&
                         Array.isArray(data[indexOfProd]?.original_images) ? (
                           data[indexOfProd]?.original_images?.map(item => (
@@ -753,7 +751,7 @@ const ProductDetails = props => {
                         ) : (
                           <Image
                             source={ic_prod_placholder}
-                            style={{width: '100%', height: '100%'}}
+                            style={{ width: '100%', height: '100%' }}
                             resizeMode="contain"
                           />
                         )}
@@ -764,18 +762,17 @@ const ProductDetails = props => {
               )}
 
               {isLoading ? (
-               <ShimmerLoader
-  loading={isLoading} // or true
-  width={wp(83.5)}
-  height={hp(14)}
-  borderRadius={hp(3.4)}
-  style={{
-    marginTop: hp(5),
-    alignSelf: 'center',
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+                <ShimmerLoader
+                  loading={isLoading} // or true
+                  width={wp(83.5)}
+                  height={hp(14)}
+                  borderRadius={hp(3.4)}
+                  style={{
+                    marginTop: hp(5),
+                    alignSelf: 'center',
+                  }}
+                  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+                />
               ) : (
                 <View>
                   {data[indexOfProd]?.variants?.length > 0 ? (
@@ -788,7 +785,8 @@ const ProductDetails = props => {
                             backgroundColor: 'white',
                             marginLeft: 20,
                             marginTop: 20,
-                          }}>
+                          }}
+                        >
                           <View>
                             <Text>Product Detail</Text>
                             <TruncatedText
@@ -807,7 +805,8 @@ const ProductDetails = props => {
                             onBackdropPress={() =>
                               setShowDesciptionModal(false)
                             }
-                            isVisible={descriptionModal}>
+                            isVisible={descriptionModal}
+                          >
                             <View
                               style={{
                                 height: 250,
@@ -818,7 +817,8 @@ const ProductDetails = props => {
                                 width: 270,
                                 alignSelf: 'center',
                                 paddingHorizontal: 10,
-                              }}>
+                              }}
+                            >
                               <Text
                                 style={{
                                   // textAlign: 'center',
@@ -827,11 +827,13 @@ const ProductDetails = props => {
                                   fontWeight: '600',
                                   marginTop: 25,
                                   alignSelf: 'center',
-                                }}>
+                                }}
+                              >
                                 Product Detail
                               </Text>
                               <Text
-                                style={{marginTop: 20, textAlign: 'center'}}>
+                                style={{ marginTop: 20, textAlign: 'center' }}
+                              >
                                 {data[indexOfProd]?.detail}
                               </Text>
                             </View>
@@ -845,7 +847,8 @@ const ProductDetails = props => {
                           color: '#679A8E',
                           marginTop: 50,
                           marginLeft: 20,
-                        }}>
+                        }}
+                      >
                         OTHER VARIANTS
                       </Text>
 
@@ -853,9 +856,9 @@ const ProductDetails = props => {
                         data={data[indexOfProd]?.variants}
                         horizontal
                         keyExtractor={(item, index) => item?.id || index}
-                        renderItem={({item}) => (
+                        renderItem={({ item }) => (
                           <CategoryVariants
-                            data={{item}}
+                            data={{ item }}
                             selectedItem={handleSelectItem}
                             isSelected={selectedVariant === item.variant_id}
                           />
@@ -867,15 +870,22 @@ const ProductDetails = props => {
                       <Text style={styles.detailText}>
                         {data[indexOfProd]?.name}
                       </Text>
-                      <View style={{right: 20, position: 'absolute', top: 10}}>
+                      <View
+                        style={{ right: 20, position: 'absolute', top: 10 }}
+                      >
                         <Text style={styles.priceText}>
-                          ₹ {data[indexOfProd]?.sp}/{data[indexOfProd].category?.unit}
+                          {data?.[indexOfProd]?.sp != null
+                            ? `₹ ${data[indexOfProd].sp}`
+                            : '₹ 0'}
+                          {data?.[indexOfProd]?.category?.unit
+                            ? `/${data[indexOfProd].category.unit}`
+                            : ''}
                         </Text>
                       </View>
                       <View style={styles.priceContainer}>
                         {data[indexOfProd]?.detail && (
                           <View>
-                            <View style={{width: '82%'}}>
+                            <View style={{ width: '82%' }}>
                               <TruncatedText
                                 text={data[indexOfProd]?.detail}
                                 wordLimit={3}
@@ -890,7 +900,8 @@ const ProductDetails = props => {
                               onBackdropPress={() =>
                                 setShowDesciptionModal(false)
                               }
-                              isVisible={descriptionModal}>
+                              isVisible={descriptionModal}
+                            >
                               <View
                                 style={{
                                   height: 250,
@@ -901,7 +912,8 @@ const ProductDetails = props => {
                                   width: 270,
                                   alignSelf: 'center',
                                   paddingHorizontal: 10,
-                                }}>
+                                }}
+                              >
                                 <Text
                                   style={{
                                     // textAlign: 'center',
@@ -910,7 +922,8 @@ const ProductDetails = props => {
                                     fontWeight: '600',
                                     marginTop: 25,
                                     alignSelf: 'center',
-                                  }}>
+                                  }}
+                                >
                                   Product Detail
                                 </Text>
                                 <Text
@@ -918,7 +931,8 @@ const ProductDetails = props => {
                                     textAlign: 'center',
                                     marginTop: 25,
                                     // justifyContent: 'center',
-                                  }}>
+                                  }}
+                                >
                                   {data[indexOfProd]?.detail}
                                 </Text>
                               </View>
@@ -936,7 +950,8 @@ const ProductDetails = props => {
                             // position: 'absolute',
                             // right: 0,
                             // bottom: 20,
-                          }}>
+                          }}
+                        >
                           {/* <Text style={styles.boxQuantityText}>
                             1 BOX = {data[indexOfProd]?.packing_quantity || 1}{' '}
                             {data[indexOfProd].unit}
@@ -946,7 +961,8 @@ const ProductDetails = props => {
                               style={{
                                 fontSize: wp(4),
                                 color: '#fff',
-                              }}>
+                              }}
+                            >
                               1 BOX = {data[indexOfProd]?.packing_quantity || 1}{' '}
                               {data[indexOfProd].unit}
                             </Text>
@@ -979,13 +995,12 @@ const ProductDetails = props => {
               <View style={styles.actionContainer}>
                 {isLoading ? (
                   <ShimmerLoader
-  loading={isLoading} // or true
-  width={wp(24)}
-  height={hp(4.3)}
-  borderRadius={hp(3)}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+                    loading={isLoading} // or true
+                    width={wp(24)}
+                    height={hp(4.3)}
+                    borderRadius={hp(3)}
+                    shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+                  />
                 ) : (
                   <TouchableOpacity
                     disabled={
@@ -996,8 +1011,9 @@ const ProductDetails = props => {
                     style={[
                       styles.lower,
                       othersProductData.current_page == 1 &&
-                        indexOfProd === 0 && {backgroundColor: '#999'},
-                    ]}>
+                        indexOfProd === 0 && { backgroundColor: '#999' },
+                    ]}
+                  >
                     <Image source={ic_back} style={styles.backIcon} />
 
                     <View style={styles.upper}>
@@ -1008,13 +1024,12 @@ const ProductDetails = props => {
 
                 {isLoading ? (
                   <ShimmerLoader
-  loading={isLoading} // or true
-  width={wp(34)}
-  height={hp(4.3)}
-  borderRadius={hp(3)}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+                    loading={isLoading} // or true
+                    width={wp(34)}
+                    height={hp(4.3)}
+                    borderRadius={hp(3)}
+                    shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+                  />
                 ) : (
                   <View
                     style={[
@@ -1022,11 +1037,13 @@ const ProductDetails = props => {
                       {
                         backgroundColor: isAddedToCart ? '#999' : '#C04547',
                       },
-                    ]}>
+                    ]}
+                  >
                     <TouchableOpacity
                       disabled={data[indexOfProd]?.cart_count > 0}
                       // activeOpacity={1}
-                      onPress={handleDecrease}>
+                      onPress={handleDecrease}
+                    >
                       <AppIcon type="antdesign" name="minus" color="#fff" />
                     </TouchableOpacity>
 
@@ -1037,21 +1054,21 @@ const ProductDetails = props => {
                     <TouchableOpacity
                       disabled={data[indexOfProd]?.cart_count > 0}
                       // activeOpacity={1}
-                      onPress={handleIncrease}>
+                      onPress={handleIncrease}
+                    >
                       <AppIcon type="antdesign" name="plus" color="#fff" />
                     </TouchableOpacity>
                   </View>
                 )}
 
                 {isLoading ? (
-                 <ShimmerLoader
-  loading={isLoading} // or true
-  width={wp(24)}
-  height={hp(4.3)}
-  borderRadius={hp(3)}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+                  <ShimmerLoader
+                    loading={isLoading} // or true
+                    width={wp(24)}
+                    height={hp(4.3)}
+                    borderRadius={hp(3)}
+                    shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+                  />
                 ) : (
                   <TouchableOpacity
                     disabled={
@@ -1068,7 +1085,8 @@ const ProductDetails = props => {
                           backgroundColor: '#999',
                         },
                     ]}
-                    activeOpacity={0.8}>
+                    activeOpacity={0.8}
+                  >
                     <View style={styles.upper}>
                       <Text style={styles.buttonText}>Next</Text>
                     </View>
@@ -1081,7 +1099,7 @@ const ProductDetails = props => {
                       source={ic_back}
                       style={[
                         styles.backIcon,
-                        {transform: [{rotateZ: '180 deg'}]},
+                        { transform: [{ rotateZ: '180deg' }] },
                       ]}
                     />
                   </TouchableOpacity>
@@ -1090,17 +1108,16 @@ const ProductDetails = props => {
             </View>
             {isLoading ? (
               <ShimmerLoader
-  loading={isLoading} // or true
-  width={wp(42)}
-  height={hp(6.1)}
-  borderRadius={hp(3)}
-  style={{
-    marginTop: hp(6),
-    alignSelf: 'center',
-  }}
-  shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
-/>
-
+                loading={isLoading} // or true
+                width={wp(42)}
+                height={hp(6.1)}
+                borderRadius={hp(3)}
+                style={{
+                  marginTop: hp(6),
+                  alignSelf: 'center',
+                }}
+                shimmerColors={['#c1c1c1', '#d6d6d6', '#c1c1c1']}
+              />
             ) : (
               <View>
                 {data[indexOfProd]?.variants?.length > 0 ? (
@@ -1112,8 +1129,9 @@ const ProductDetails = props => {
                     style={[
                       styles.AddToCartButton,
 
-                      {backgroundColor: isAddedToCart ? '#999' : '#C04547'},
-                    ]}>
+                      { backgroundColor: isAddedToCart ? '#999' : '#C04547' },
+                    ]}
+                  >
                     <AppIcon
                       type="antdesign"
                       name="shopping-cart"
@@ -1128,7 +1146,8 @@ const ProductDetails = props => {
                           !Number(data[indexOfProd]?.stock) > 0 && {
                             fontSize: wp(4),
                           },
-                      ]}>
+                      ]}
+                    >
                       {/* {buttonText} */}
                       {selectVariant?.is_stock === 0
                         ? 'Add to Wishlist'
@@ -1151,7 +1170,8 @@ const ProductDetails = props => {
                             ? '#999'
                             : '#C04547',
                       },
-                    ]}>
+                    ]}
+                  >
                     <AppIcon
                       type="antdesign"
                       name="shopping-cart"
@@ -1166,7 +1186,8 @@ const ProductDetails = props => {
                           !Number(data[indexOfProd]?.stock) > 0 && {
                             fontSize: wp(4),
                           },
-                      ]}>
+                      ]}
+                    >
                       {data[indexOfProd]?.cart_count > 0
                         ? 'Added'
                         : data[indexOfProd]?.is_limited == 1 &&
@@ -1237,7 +1258,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     overflow: 'hidden',
   },
   productDetailsContainer: {
@@ -1251,7 +1272,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
   },
   priceContainer: {
     flexDirection: 'row',
@@ -1285,7 +1306,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
   },
   backIcon: {
     width: wp(8),
@@ -1302,7 +1323,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
   },
   buttonText: {
     fontFamily: 'Roboto-Bold',
@@ -1319,7 +1340,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
   },
   quantityValueContainer: {
     backgroundColor: '#fff',
@@ -1329,7 +1350,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1350,11 +1371,58 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 5,
     marginBottom: hp(9),
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
   },
   AddToCartText: {
     color: '#fff',
     fontFamily: 'Roboto-Bold',
     fontSize: wp(4.5),
   },
+
+
+
+
+  // cart 
+
+  cartWrapper: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  position: 'relative',
+},
+
+countBubble: {
+  position: 'absolute',
+  top: -6,
+  right: -6,
+  zIndex:1,
+  backgroundColor: 'red',
+  borderRadius: 10,
+  minWidth: 18,
+  height: 18,
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingHorizontal: 4,
+},
+
+countText: {
+  color: '#fff',
+  fontSize: 10,
+  fontWeight: 'bold',
+},
+
+amountBox: {
+  // marginLeft: wp(2),
+  backgroundColor: 'gray',
+  paddingHorizontal: wp(2.5),
+  paddingVertical: wp(0.8),
+  borderRadius: 6,
+  left:-50,
+  position:"absolute"
+},
+
+amountText: {
+  fontSize: 12,
+  fontWeight: '600',
+  color: '#fff',
+},
 });

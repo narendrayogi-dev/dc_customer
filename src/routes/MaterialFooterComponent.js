@@ -118,7 +118,7 @@ const WaveBottomTabBar = props => {
         style={bothStyle.button}
         disabled={!active_store_code}
         onPress={() =>
-          resetTo('Home', {
+          navigate('Home', {
             screen: 'HomeScreen',
           })
         }
