@@ -1,94 +1,81 @@
-import {
-  Platform,
-  Alert,
-  Linking,
-  ToastAndroid,
-  PermissionsAndroid,
-} from 'react-native';
-
-import ReactNativeBlobUtil from 'react-native-blob-util';
+import { Alert, Linking } from 'react-native';
+import RNFS from 'react-native-fs';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { showSnack } from './Snackbar';
 
-export const downloadImage = async (url, name, setLoader) => {
+const requestPhotoPermission = async () => {
   try {
-    setLoader(true);
+    const permission = PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY;
 
-    const hasPermission = await requestStoragePermission();
-    if (!hasPermission) {
+    let status = await check(permission);
+
+    if (status === RESULTS.GRANTED) {
+      return true;
+    }
+
+    if (status === RESULTS.DENIED) {
+      status = await request(permission);
+      return status === RESULTS.GRANTED;
+    }
+
+    if (status === RESULTS.BLOCKED) {
       Alert.alert(
-        'Permission Denied',
-        'Please allow storage permission from settings.',
+        'Permission Required',
+        'Please allow Photos access from Settings to save images.',
         [
           { text: 'Cancel', style: 'cancel' },
           { text: 'Open Settings', onPress: () => Linking.openSettings() },
         ],
       );
-      setLoader(false);
-      return;
+      return false;
     }
 
-    const { fs, config, MediaCollection } = ReactNativeBlobUtil;
-
-    const timestamp = Date.now();
-    const fileName = `${name}_${timestamp}.png`;
-
-    const downloadPath =
-      Platform.OS === 'android'
-        ? `${fs.dirs.DownloadDir}/${fileName}`
-        : `${fs.dirs.DocumentDir}/${fileName}`;
-
-    const res = await config({
-      fileCache: true,
-      path: downloadPath,
-      addAndroidDownloads: Platform.OS === 'android'
-        ? {
-            useDownloadManager: true,
-            notification: true,
-            title: fileName,
-            description: 'Downloading image...',
-            mime: 'image/png',
-            path: downloadPath,
-          }
-        : undefined,
-    }).fetch('GET', url);
-
-    // 📸 Register in Gallery / Photos
-    await MediaCollection.copyToMediaStore(
-      {
-        name: fileName,
-        parentFolder: 'DC_Jewellery', // your custom album
-        mimeType: 'image/png',
-      },
-      'Image',
-      res.path(),
-    );
-
-    Platform.OS === 'android'
-      ? ToastAndroid.show(
-          'Image saved to Gallery & Downloads',
-          ToastAndroid.SHORT,
-        )
-      : showSnack('Image saved to Photos');
-
+    return false;
   } catch (error) {
-    console.error('Download error:', error);
-    Alert.alert('Error', 'Something went wrong. Please try again.');
-  } finally {
-    setLoader(false);
+    console.log('Permission error:', error);
+    return false;
   }
 };
 
+export const downloadImage = async (url, name = 'image', setLoader) => {
+  try {
+    setLoader?.(true);
 
-
-// ✅ Minimal permission handling
-const requestStoragePermission = async () => {
-  if (Platform.OS === 'android') {
-    if (Platform.Version <= 28) {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    /* Check permission first */
+    const hasPermission = await requestPhotoPermission();
+    if (!hasPermission) {
+      setLoader?.(false);
+      return;
     }
+
+    const timestamp = Date.now();
+    const fileName = `${name}_${timestamp}.jpg`;
+
+    const downloadPath = `${RNFS.TemporaryDirectoryPath}/${fileName}`;
+
+    /* Download image */
+    const result = await RNFS.downloadFile({
+      fromUrl: url,
+      toFile: downloadPath,
+    }).promise;
+
+    if (result.statusCode === 200) {
+      /* Save to Photos */
+      await CameraRoll.save(downloadPath, { type: 'photo' });
+
+      showSnack?.('Image saved to Photos');
+    } else {
+      throw new Error('Download failed');
+    }
+  } catch (error) {
+    console.log('Download error:', error);
+
+    Alert.alert(
+      'Download Failed',
+      'Something went wrong while downloading the image.',
+    );
+  } finally {
+    setLoader?.(false);
   }
-  return true; // Android 10+ no permission needed
 };

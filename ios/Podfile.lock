@@ -2068,6 +2068,34 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-cameraroll (7.10.2):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - react-native-date-picker (5.0.12):
     - boost
     - DoubleConversion
@@ -3619,6 +3647,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - "react-native-cameraroll (from `../node_modules/@react-native-camera-roll/camera-roll`)"
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - "react-native-document-picker (from `../node_modules/@react-native-documents/picker`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
@@ -3812,6 +3841,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-cameraroll:
+    :path: "../node_modules/@react-native-camera-roll/camera-roll"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
   react-native-document-picker:
@@ -4020,6 +4051,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 9d33f0f79b6b5705d08d89d8fb9709d1ee655c81
   React-microtasksnativemodule: 1a5a9488d2a05c74ea276c2012df632d8221d169
   react-native-blob-util: e2dec05dec043b39e26549a2ebc6c442b867c52c
+  react-native-cameraroll: aa5f6fe38b5574f1066a37ceaad5ece494a157a5
   react-native-date-picker: 75b015a41b3323cab5c0b528f1956fbf82b4d557
   react-native-document-picker: 07136ef5cc3fb4a04419458616cb23be6fcd3ba1
   react-native-image-picker: b99d9c1f2ddbef491eb49e1103e5c2ce78b9ab37
